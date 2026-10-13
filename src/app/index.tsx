@@ -18,6 +18,8 @@ import {
   type StepId,
 } from "@/core";
 
+import { Host, Picker } from "@expo/ui";
+
 // Etichette in italiano per le tappe (la UI traduce, core/ resta neutro)
 const STEP_LABELS: Record<StepId, string> = {
   travel: "Viaggio da casa",
@@ -84,19 +86,16 @@ export default function HomeScreen() {
       </View>
 
       <Text style={styles.label}>Compagnia</Text>
-      <View style={styles.row}>
-        {Object.values(AIRLINES).map((a) => (
-          <Pressable
-            key={a.id}
-            onPress={() => setAirline(a.id)}
-            style={[styles.chip, airline === a.id && styles.chipActive]}
-          >
-            <Text style={airline === a.id && styles.chipTextActive}>
-              {a.name}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
+      <Host matchContents>
+        <Picker
+          selectedValue={airline}
+          onValueChange={(id) => setAirline(id)}
+        >
+          {Object.values(AIRLINES).map((a) => (
+            <Picker.Item key={a.id} label={a.name} value={a.id} />
+          ))}
+        </Picker>
+      </Host>
 
       <Text style={styles.label}>Orario del volo (HH:MM)</Text>
       <TextInput
