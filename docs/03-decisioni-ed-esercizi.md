@@ -25,9 +25,6 @@ Perché: l'MVP funziona già senza chiedere la compagnia, e aggiungerla alla UI 
 4. **Validazione:** cosa succede se i minuti di viaggio sono negativi? Decidi tu se il controllo va fatto in `core/` o nella UI, e motiva la scelta.
 5. **Estrai un componente:** sposta il blocco del risultato in `src/components/TripResult.tsx`, che riceve `plan` come prop.
 
-## Prossimi passi suggeriti
+## Prossimi passi
 
-1. Rivedere e mergiare questo branch (con una PR).
-2. Calibrare i tempi in `airports.ts` e `airlines.ts`.
-3. Inserire nella UI un date/time picker e la scelta della compagnia.
-4. Scrivere i test dei componenti con `@testing-library/react-native` (opzionale).
+I prossimi passi, compresi gli esercizi qui sopra, sono nella [roadmap](../ROADMAP.md), dove si segnano man mano che li completi.
