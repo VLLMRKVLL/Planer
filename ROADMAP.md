@@ -6,12 +6,12 @@ La roadmap è divisa in **fasi**: ogni fase finisce con un risultato che si può
 
 Ogni passo è una casella di controllo Markdown. GitHub la mostra come una checkbox vera e aggiorna il contatore di avanzamento.
 
-| Segno | Significato |
-|---|---|
-| `- [ ]` | da fare |
-| `- [ ] 🚧` | in corso (al massimo 1–2 passi alla volta) |
-| `- [x]` | fatto |
-| `- [ ] ~~testo~~` | scartato (scrivi anche il motivo) |
+| Segno             | Significato                                |
+| ----------------- | ------------------------------------------ |
+| `- [ ]`           | da fare                                    |
+| `- [ ] 🚧`        | in corso (al massimo 1–2 passi alla volta) |
+| `- [x]`           | fatto                                      |
+| `- [ ] ~~testo~~` | scartato (scrivi anche il motivo)          |
 
 Il flusso per ogni passo:
 
@@ -33,7 +33,7 @@ Obiettivo: un progetto che parte, con la logica di calcolo testata e documentata
 - [x] Schermata unica con form e risultato
 - [x] Documentazione in `docs/`
 - [x] PR iniziale mergiata
-- [ ] Primo `npm run lint` in locale (installa `eslint-config-expo`) e correzione degli eventuali errori
+- [x] Primo `npm run lint` in locale (installa `eslint-config-expo`) e correzione degli eventuali errori
 - [ ] Scegliere la licenza (consigliata MIT) e aggiungere il file `LICENSE`
 
 ## Fase 1: MVP usabile
