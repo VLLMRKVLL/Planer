@@ -20,3 +20,7 @@ npm run typecheck
 1. [Setup e comandi](docs/01-setup.md)
 2. [Architettura e modello di calcolo](docs/02-architettura.md)
 3. [Decisioni, punti aperti ed esercizi](docs/03-decisioni-ed-esercizi.md)
+
+## Roadmap
+
+Fasi, passi da fare e come segnarli: [ROADMAP.md](ROADMAP.md).
