@@ -42,12 +42,10 @@ Obiettivo: un'app che useresti davvero prima di un volo, senza dover scrivere co
 
 - [x] Selettore della compagnia aerea nella UI ("chip" letti da `AIRLINES`)
 - [x] Selettore della compagnia come picker
-- [w] Validazione dei minuti di viaggio negativi o vuoti (decidere: `core/` o UI?)
-- [ ] Estrarre il risultato in `src/components/TripResult.tsx`
 
 **Input più comodi**
 
-- [ ] Date/time picker per data e ora del volo, al posto del testo `HH:MM`
+- [w] Date/time picker per data e ora del volo, al posto del testo `HH:MM`
 - [ ] Gestire i voli di un altro giorno: ora l'orario è sempre "oggi"
 - [ ] Scelta del paese da una lista con ricerca, al posto del codice ISO
 - [ ] Messaggi d'errore vicino al campo sbagliato, invece del generico "Compila i campi"

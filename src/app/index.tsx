@@ -47,14 +47,24 @@ function parseTime(text: string): Date | null {
 export default function HomeScreen() {
   const [airport, setAirport] = useState<AirportCode>("MXP");
   const [airline, setAirline] = useState<AirlineId>("default");
-  const [flightTime, setFlightTime] = useState("10:00");
+  const [flightMinutes, setFlightMinutes] = useState(0);
   const [country, setCountry] = useState("FR");
   const [hasCheckedBag, setHasCheckedBag] = useState(false);
   const [onlineCheckInDone, setOnlineCheckInDone] = useState(true);
   const [travelMinutes, setTravelMinutes] = useState("45");
 
+  // Gestione dell'orario di partenza
+  const MAX_HOURS = 20;
+  const HOURS_LIST = Array.from({ length: MAX_HOURS + 1 }, (_, h) => h);
+  const MINUTES_LIST = Array.from({ length: 12 }, (_, i) => i * 5);
+
+  const hours = Math.floor((flightMinutes ?? 0) / 60);
+  const minutes = (flightMinutes ?? 0) % 60;
+
+  const timeString = hours + ":" + minutes;
+
   // Ricalcolo a ogni render: la funzione è pura e velocissima, non serve un bottone
-  const departureTime = parseTime(flightTime);
+  const departureTime = parseTime(timeString);
   const travel = Number(travelMinutes);
   const plan =
     departureTime && Number.isFinite(travel) && country.trim().length === 2
@@ -87,10 +97,7 @@ export default function HomeScreen() {
 
       <Text style={styles.label}>Compagnia</Text>
       <Host matchContents>
-        <Picker
-          selectedValue={airline}
-          onValueChange={(id) => setAirline(id)}
-        >
+        <Picker selectedValue={airline} onValueChange={(id) => setAirline(id)}>
           {Object.values(AIRLINES).map((a) => (
             <Picker.Item key={a.id} label={a.name} value={a.id} />
           ))}
@@ -98,11 +105,30 @@ export default function HomeScreen() {
       </Host>
 
       <Text style={styles.label}>Orario del volo (HH:MM)</Text>
-      <TextInput
-        style={styles.input}
-        value={flightTime}
-        onChangeText={setFlightTime}
-      />
+      <View style={styles.row}>
+        <Host style={styles.durationWheel}>
+          <Picker
+            appearance="wheel"
+            selectedValue={hours}
+            onValueChange={(h) => setFlightMinutes(h * 60 + minutes)}
+          >
+            {HOURS_LIST.map((h) => (
+              <Picker.Item key={h} label={`${h} h`} value={h} />
+            ))}
+          </Picker>
+        </Host>
+        <Host style={styles.durationWheel}>
+          <Picker
+            appearance="wheel"
+            selectedValue={minutes}
+            onValueChange={(m) => setFlightMinutes(hours * 60 + m)}
+          >
+            {MINUTES_LIST.map((m) => (
+              <Picker.Item key={m} label={`${m} min`} value={m} />
+            ))}
+          </Picker>
+        </Host>
+      </View>
 
       <Text style={styles.label}>Paese di destinazione (es. FR, GB, US)</Text>
       <TextInput
@@ -166,6 +192,7 @@ const styles = StyleSheet.create({
   container: { padding: 16, gap: 8 },
   label: { fontWeight: "600", marginTop: 8 },
   row: { flexDirection: "row", gap: 8, flexWrap: "wrap" },
+  durationWheel: {flex: 1, minWidth: 0, height: 40, maxWidth: 130},
   chip: {
     paddingVertical: 8,
     paddingHorizontal: 16,
