@@ -55,11 +55,6 @@ export default function HomeScreen() {
   const [onlineCheckInDone, setOnlineCheckInDone] = useState(true);
   const [travelMinutes, setTravelMinutes] = useState("45");
 
-  // Gestione dell'orario di partenza
-  const MAX_HOURS = 20;
-  const HOURS_LIST = Array.from({ length: MAX_HOURS + 1 }, (_, h) => h);
-  const MINUTES_LIST = Array.from({ length: 12 }, (_, i) => i * 5);
-
   const hours = Math.floor((flightMinutes ?? 0) / 60);
   const minutes = (flightMinutes ?? 0) % 60;
 
@@ -171,7 +166,6 @@ const styles = StyleSheet.create({
   container: { padding: 16, gap: 8 },
   label: { fontWeight: "600", marginTop: 8 },
   row: { flexDirection: "row", gap: 8, flexWrap: "wrap" },
-  durationWheel: { flex: 1, minWidth: 0, height: 40, maxWidth: 130 },
   chip: {
     paddingVertical: 8,
     paddingHorizontal: 16,
