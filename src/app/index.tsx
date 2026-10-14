@@ -20,6 +20,8 @@ import {
 
 import { Host, Picker } from "@expo/ui";
 
+import { TimeWheel } from "@/components/TimeWheel";
+
 // Etichette in italiano per le tappe (la UI traduce, core/ resta neutro)
 const STEP_LABELS: Record<StepId, string> = {
   travel: "Viaggio da casa",
@@ -105,30 +107,7 @@ export default function HomeScreen() {
       </Host>
 
       <Text style={styles.label}>Orario del volo (HH:MM)</Text>
-      <View style={styles.row}>
-        <Host style={styles.durationWheel}>
-          <Picker
-            appearance="wheel"
-            selectedValue={hours}
-            onValueChange={(h) => setFlightMinutes(h * 60 + minutes)}
-          >
-            {HOURS_LIST.map((h) => (
-              <Picker.Item key={h} label={`${h} h`} value={h} />
-            ))}
-          </Picker>
-        </Host>
-        <Host style={styles.durationWheel}>
-          <Picker
-            appearance="wheel"
-            selectedValue={minutes}
-            onValueChange={(m) => setFlightMinutes(hours * 60 + m)}
-          >
-            {MINUTES_LIST.map((m) => (
-              <Picker.Item key={m} label={`${m} min`} value={m} />
-            ))}
-          </Picker>
-        </Host>
-      </View>
+      <TimeWheel valueMinutes={flightMinutes} onChange={setFlightMinutes} />
 
       <Text style={styles.label}>Paese di destinazione (es. FR, GB, US)</Text>
       <TextInput
@@ -192,7 +171,7 @@ const styles = StyleSheet.create({
   container: { padding: 16, gap: 8 },
   label: { fontWeight: "600", marginTop: 8 },
   row: { flexDirection: "row", gap: 8, flexWrap: "wrap" },
-  durationWheel: {flex: 1, minWidth: 0, height: 40, maxWidth: 130},
+  durationWheel: { flex: 1, minWidth: 0, height: 40, maxWidth: 130 },
   chip: {
     paddingVertical: 8,
     paddingHorizontal: 16,
