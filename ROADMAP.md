@@ -40,8 +40,9 @@ Obiettivo: un progetto che parte, con la logica di calcolo testata e documentata
 
 Obiettivo: un'app che useresti davvero prima di un volo, senza dover scrivere codici e orari a mano.
 
-- [w] Selettore della compagnia aerea nella UI ("chip" letti da `AIRLINES`)
-- [ ] Validazione dei minuti di viaggio negativi o vuoti (decidere: `core/` o UI?)
+- [x] Selettore della compagnia aerea nella UI ("chip" letti da `AIRLINES`)
+- [x] Selettore della compagnia come picker
+- [w] Validazione dei minuti di viaggio negativi o vuoti (decidere: `core/` o UI?)
 - [ ] Estrarre il risultato in `src/components/TripResult.tsx`
 
 **Input più comodi**
