@@ -46,15 +46,14 @@ Obiettivo: un'app che useresti davvero prima di un volo, senza dover scrivere co
 **Input più comodi**
 
 - [x] Date/time picker per data e ora del volo, al posto del testo `HH:MM`
-- [w] Scelta del paese da una lista con ricerca, al posto del codice ISO
-- [ ] Messaggi d'errore vicino al campo sbagliato, invece del generico "Compila i campi"
+- [x] Scelta del paese da una lista con ricerca, al posto del codice ISO
 
 **Dati e presentazione**
 
-- [ ] Calibrare i tempi di `airports.ts` (fonti: siti degli aeroporti, esperienza personale)
-- [ ] Verificare i tempi di `airlines.ts` sui siti delle compagnie
+- [w] Calibrare i tempi di `airports.ts` (fonti: siti degli aeroporti, esperienza personale)
+- [w] Verificare i tempi di `airlines.ts` sui siti delle compagnie
 - [ ] Risultato come timeline (ora di ogni tappa, non solo i minuti)
-- [ ] Supporto al tema scuro (`userInterfaceStyle` è già `automatic`, ma i colori sono fissi)
+- [ ] Supporto al tema scuro (`userInterfaceStyle` è su `light`)
 
 ## Fase 2: Qualità e automazione
 
