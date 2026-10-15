@@ -42,7 +42,7 @@ export default function HomeScreen() {
   const [airport, setAirport] = useState<AirportCode>("MXP");
   const [airline, setAirline] = useState<AirlineId>("default");
   const [departureTime, setDepartureTime] = useState(new Date());
-  const [country, setCountry] = useState("FR");
+  const [country, setCountry] = useState("IT");
   const [hasCheckedBag, setHasCheckedBag] = useState(false);
   const [onlineCheckInDone, setOnlineCheckInDone] = useState(true);
   const [travelMinutes, setTravelMinutes] = useState("45");
@@ -98,7 +98,7 @@ export default function HomeScreen() {
       <Text style={styles.label}>Paese di destinazione</Text>
       <Select
         options={Object.values(COUNTRIES)}
-        value={"IT"}
+        value={country}
         onChange={setCountry}
       />
 

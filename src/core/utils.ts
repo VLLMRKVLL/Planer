@@ -14,6 +14,9 @@ export function requiresPassportControl(destinationCountry: string): boolean {
   const code = (destinationCountry ?? '').trim().toUpperCase();
   const country = COUNTRIES.find((c) => c.id === code);
 
+  console.log(destinationCountry);
+  console.log(country);
+
   return !country?.schengen;
 }
 
