@@ -19,8 +19,8 @@ import {
 } from "@/core";
 
 import { Host, Picker } from "@expo/ui";
-
-import { TimeWheel } from "@/components/TimeWheel";
+import { DatePicker } from "@expo/ui/swift-ui";
+import { datePickerStyle } from "@expo/ui/swift-ui/modifiers";
 
 // Etichette in italiano per le tappe (la UI traduce, core/ resta neutro)
 const STEP_LABELS: Record<StepId, string> = {
@@ -35,33 +35,16 @@ const STEP_LABELS: Record<StepId, string> = {
 const formatTime = (d: Date) =>
   d.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" });
 
-// "HH:MM" → Date di oggi a quell'ora; null se il formato non è valido
-function parseTime(text: string): Date | null {
-  const match = /^(\d{1,2}):(\d{2})$/.exec(text.trim());
-  if (!match) return null;
-  const [hours, minutes] = [Number(match[1]), Number(match[2])];
-  if (hours > 23 || minutes > 59) return null;
-  const date = new Date();
-  date.setHours(hours, minutes, 0, 0);
-  return date;
-}
-
 export default function HomeScreen() {
   const [airport, setAirport] = useState<AirportCode>("MXP");
   const [airline, setAirline] = useState<AirlineId>("default");
-  const [flightMinutes, setFlightMinutes] = useState(0);
+  const [departureTime, setDepartureTime] = useState(new Date());
   const [country, setCountry] = useState("FR");
   const [hasCheckedBag, setHasCheckedBag] = useState(false);
   const [onlineCheckInDone, setOnlineCheckInDone] = useState(true);
   const [travelMinutes, setTravelMinutes] = useState("45");
 
-  const hours = Math.floor((flightMinutes ?? 0) / 60);
-  const minutes = (flightMinutes ?? 0) % 60;
-
-  const timeString = hours + ":" + minutes;
-
   // Ricalcolo a ogni render: la funzione è pura e velocissima, non serve un bottone
-  const departureTime = parseTime(timeString);
   const travel = Number(travelMinutes);
   const plan =
     departureTime && Number.isFinite(travel) && country.trim().length === 2
@@ -101,8 +84,15 @@ export default function HomeScreen() {
         </Picker>
       </Host>
 
-      <Text style={styles.label}>Orario del volo (HH:MM)</Text>
-      <TimeWheel valueMinutes={flightMinutes} onChange={setFlightMinutes} />
+      <Text style={styles.label}>Orario del volo</Text>
+      <Host matchContents>
+        <DatePicker
+          selection={departureTime}
+          onDateChange={setDepartureTime}
+          displayedComponents={["hourAndMinute"]}
+          modifiers={[datePickerStyle("wheel")]}
+        />
+      </Host>
 
       <Text style={styles.label}>Paese di destinazione (es. FR, GB, US)</Text>
       <TextInput
