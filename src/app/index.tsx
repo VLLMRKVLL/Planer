@@ -12,15 +12,18 @@ import {
 import {
   AIRLINES,
   AIRPORTS,
+  COUNTRIES,
   calculateTrip,
   type AirlineId,
   type AirportCode,
   type StepId,
 } from "@/core";
 
-import { Host, Picker } from "@expo/ui";
+import { Host } from "@expo/ui";
 import { DatePicker } from "@expo/ui/swift-ui";
 import { datePickerStyle } from "@expo/ui/swift-ui/modifiers";
+
+import { Select } from "@/components/Select";
 
 // Etichette in italiano per le tappe (la UI traduce, core/ resta neutro)
 const STEP_LABELS: Record<StepId, string> = {
@@ -76,13 +79,11 @@ export default function HomeScreen() {
       </View>
 
       <Text style={styles.label}>Compagnia</Text>
-      <Host matchContents>
-        <Picker selectedValue={airline} onValueChange={(id) => setAirline(id)}>
-          {Object.values(AIRLINES).map((a) => (
-            <Picker.Item key={a.id} label={a.name} value={a.id} />
-          ))}
-        </Picker>
-      </Host>
+      <Select
+        options={Object.values(AIRLINES)}
+        value={airline}
+        onChange={setAirline}
+      />
 
       <Text style={styles.label}>Orario del volo</Text>
       <Host matchContents>
@@ -94,13 +95,11 @@ export default function HomeScreen() {
         />
       </Host>
 
-      <Text style={styles.label}>Paese di destinazione (es. FR, GB, US)</Text>
-      <TextInput
-        style={styles.input}
-        value={country}
-        onChangeText={setCountry}
-        autoCapitalize="characters"
-        maxLength={2}
+      <Text style={styles.label}>Paese di destinazione</Text>
+      <Select
+        options={Object.values(COUNTRIES)}
+        value={"IT"}
+        onChange={setCountry}
       />
 
       <Text style={styles.label}>Minuti di viaggio da casa</Text>

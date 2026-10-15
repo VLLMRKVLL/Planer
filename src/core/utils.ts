@@ -1,4 +1,4 @@
-import { SCHENGEN_COUNTRIES } from './schengen';
+import { COUNTRIES } from './countries';
 import type { TimeSlot } from './types';
 
 // Restituisce la fascia oraria di una data (ora locale del dispositivo)
@@ -9,9 +9,10 @@ export function getTimeSlot(date: Date): TimeSlot {
   return 'evening';
 }
 
+// TODO: da rivedere il calcolo per il passaporto
 // Partendo dall'Italia, il controllo passaporti serve solo verso paesi extra-Schengen
 export function requiresPassportControl(destinationCountry: string): boolean {
-  return !SCHENGEN_COUNTRIES.has(destinationCountry.trim().toUpperCase());
+  return true;
 }
 
 // Sottrae minuti a una data senza modificarla (le funzioni pure non mutano gli input)

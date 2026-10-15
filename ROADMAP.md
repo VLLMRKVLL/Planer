@@ -45,9 +45,8 @@ Obiettivo: un'app che useresti davvero prima di un volo, senza dover scrivere co
 
 **Input più comodi**
 
-- [w] Date/time picker per data e ora del volo, al posto del testo `HH:MM`
-- [ ] Gestire i voli di un altro giorno: ora l'orario è sempre "oggi"
-- [ ] Scelta del paese da una lista con ricerca, al posto del codice ISO
+- [x] Date/time picker per data e ora del volo, al posto del testo `HH:MM`
+- [w] Scelta del paese da una lista con ricerca, al posto del codice ISO
 - [ ] Messaggi d'errore vicino al campo sbagliato, invece del generico "Compila i campi"
 
 **Dati e presentazione**
