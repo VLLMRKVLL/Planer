@@ -45,17 +45,20 @@ Obiettivo: un'app che useresti davvero prima di un volo, senza dover scrivere co
 
 **Input più comodi**
 
-- [w] Date/time picker per data e ora del volo, al posto del testo `HH:MM`
-- [ ] Gestire i voli di un altro giorno: ora l'orario è sempre "oggi"
-- [ ] Scelta del paese da una lista con ricerca, al posto del codice ISO
-- [ ] Messaggi d'errore vicino al campo sbagliato, invece del generico "Compila i campi"
+- [x] Date/time picker per data e ora del volo, al posto del testo `HH:MM`
+- [x] Scelta del paese da una lista con ricerca, al posto del codice ISO
 
 **Dati e presentazione**
 
-- [ ] Calibrare i tempi di `airports.ts` (fonti: siti degli aeroporti, esperienza personale)
-- [ ] Verificare i tempi di `airlines.ts` sui siti delle compagnie
-- [ ] Risultato come timeline (ora di ogni tappa, non solo i minuti)
-- [ ] Supporto al tema scuro (`userInterfaceStyle` è già `automatic`, ma i colori sono fissi)
+- [x] Catalogo di tutti gli aeroporti con voli di linea (OurAirports), aggiornato ogni mese da GitHub Actions
+- [x] Paese di partenza e select dell'aeroporto filtrata per paese
+- [x] Controllo passaporti in base a partenza e destinazione (non più solo dall'Italia)
+- [w] Calibrare i tempi di `AIRPORT_PROFILES` (fonti: Carte dei Servizi degli aeroporti, siti, esperienza personale)
+- [ ] Rivedere i tempi generici di `DEFAULT_TERMINALS` per aeroporti grandi, medi e piccoli
+- [ ] Terminal da compagnia (`airlineTerminals`, es. easyJet a MXP → T2)
+- [w] Verificare i tempi di `airlines.ts` sui siti delle compagnie
+- [x] Risultato come timeline (ora di ogni tappa, non solo i minuti)
+- [ ] Supporto al tema scuro (`userInterfaceStyle` è su `light`)
 
 ## Fase 2: Qualità e automazione
 
@@ -85,7 +88,7 @@ Obiettivo: inserire meno dati possibile e ricevere stime più precise.
 - [ ] Compilare automaticamente il `FlightInput` a partire dal numero di volo
 - [ ] Tempo di viaggio da casa stimato con il traffico (API mappe) invece che inserito a mano
 - [ ] Tempi degli aeroporti caricati da remoto, per aggiornarli senza pubblicare una nuova versione
-- [ ] Nuovi aeroporti oltre LIN, MXP e BGY
+- [ ] Fuso orario dell'aeroporto di partenza (per voli che partono da un fuso diverso da quello del telefono)
 
 ## Fase 5: Pubblicazione
 
@@ -113,5 +116,7 @@ Le idee arrivano qui prima di entrare in una fase.
 
 Una riga per ogni passo chiuso, la più recente in alto. Formato: `AAAA-MM-GG: cosa è stato fatto (PR o commit)`.
 
+- 2026-10-16: catalogo aeroporti da OurAirports con aggiornamento mensile, paese di partenza, select aeroporti, passaporti in base a origine e destinazione
+- 2026-10-16: risultato come timeline con orari, buffer e scadenze; calcolo a ritroso con terminal, fascia della coda e margine sul banco
 - 2026-10-13: creata questa roadmap
 - 2026-10-13: Fase 0, boilerplate Expo, logica di calcolo, test e documentazione (VLLMRKVLL/Planer#1)
