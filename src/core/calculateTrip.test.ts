@@ -193,6 +193,45 @@ describe('calculateTrip', () => {
     expectConsistentTimeline(plan);
   });
 
+  it('works for airports that are not calibrated', () => {
+    const plan = calculateTrip({
+      airport: 'FCO',
+      departureTime: at(12),
+      destinationCountry: 'FR',
+      hasCheckedBag: false,
+      onlineCheckInDone: true,
+      travelTimeMinutes: 30,
+    });
+    expectConsistentTimeline(plan);
+  });
+
+  it('takes the departure country from the airport for passport control', () => {
+    const base = {
+      departureTime: at(12),
+      destinationCountry: 'FR',
+      hasCheckedBag: false,
+      onlineCheckInDone: true,
+      travelTimeMinutes: 30,
+    };
+    const hasPassport = (airport: string) =>
+      calculateTrip({ ...base, airport }).timeline.some((s) => s.id === 'passportControl');
+    expect(hasPassport('MXP')).toBe(false); // Italia → Francia: entrambi Schengen
+    expect(hasPassport('LHR')).toBe(true); // Regno Unito → Francia
+  });
+
+  it('throws for an unknown airport code', () => {
+    expect(() =>
+      calculateTrip({
+        airport: 'ZZZ',
+        departureTime: at(12),
+        destinationCountry: 'FR',
+        hasCheckedBag: false,
+        onlineCheckInDone: true,
+        travelTimeMinutes: 30,
+      }),
+    ).toThrow(/ZZZ/);
+  });
+
   it('uses the chosen terminal and falls back to the first one', () => {
     const base = {
       departureTime: at(12),

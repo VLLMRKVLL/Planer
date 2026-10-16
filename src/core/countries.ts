@@ -1,12 +1,19 @@
 import countries from "i18n-iso-countries";
 import it from "i18n-iso-countries/langs/it.json";
 
-// Partendo dall'Italia, il controllo passaporti serve solo verso paesi extra-Schengen
-export function requiresPassportControl(destinationCountry: string): boolean {
-  const code = (destinationCountry ?? "").trim().toUpperCase();
-  const country = COUNTRIES.find((c) => c.id === code);
+// Il controllo passaporti non serve per i voli nazionali e per quelli tra due paesi Schengen.
+// Un codice sconosciuto conta come extra-Schengen (scelta prudente).
+export function requiresPassportControl(
+  originCountry: string,
+  destinationCountry: string,
+): boolean {
+  const origin = (originCountry ?? "").trim().toUpperCase();
+  const destination = (destinationCountry ?? "").trim().toUpperCase();
+  if (origin === destination) return false;
 
-  return !country?.schengen;
+  const isSchengen = (code: string) =>
+    COUNTRIES.find((c) => c.id === code)?.schengen ?? false;
+  return !(isSchengen(origin) && isSchengen(destination));
 }
 
 export const SCHENGEN_COUNTRIES: ReadonlySet<string> = new Set([

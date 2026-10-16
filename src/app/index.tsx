@@ -10,9 +10,10 @@ import {
 
 import {
   AIRLINES,
-  AIRPORTS,
   COUNTRIES,
   calculateTrip,
+  getAirport,
+  getAirportsByCountry,
   type AirlineId,
   type AirportCode,
   type DeadlineId,
@@ -46,9 +47,19 @@ const DEADLINE_LABELS: Record<DeadlineId, string> = {
 const formatTime = (d: Date) =>
   d.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" });
 
+// Paesi di partenza: solo quelli con almeno un aeroporto nel catalogo
+const ORIGIN_COUNTRIES = COUNTRIES.filter(
+  (c) => getAirportsByCountry(c.id).length > 0,
+);
+
+// Primo terminal di un aeroporto (i codici arrivano dal catalogo, quindi esiste)
+const firstTerminalOf = (code: AirportCode): TerminalId =>
+  getAirport(code)?.terminals[0].id ?? "T1";
+
 export default function HomeScreen() {
+  const [originCountry, setOriginCountry] = useState("IT");
   const [airport, setAirport] = useState<AirportCode>("MXP");
-  const [terminal, setTerminal] = useState<TerminalId>(AIRPORTS.MXP.terminals[0].id);
+  const [terminal, setTerminal] = useState<TerminalId>(firstTerminalOf("MXP"));
   const [airline, setAirline] = useState<AirlineId>("default");
   const [departureTime, setDepartureTime] = useState(new Date());
   const [country, setCountry] = useState("IT");
@@ -72,30 +83,57 @@ export default function HomeScreen() {
         })
       : null;
 
-  // Cerco la lista dei terminal
-  const TERMINALS = AIRPORTS[airport].terminals;
+  const airportOptions = getAirportsByCountry(originCountry).map((a) => ({
+    id: a.code,
+    name: `${a.name} (${a.code})`,
+  }));
+  const selectedAirport = getAirport(airport);
+  const terminals = selectedAirport?.terminals ?? [];
+
+  // Cambiando aeroporto il terminal precedente potrebbe non esistere: si riparte dal primo
+  const changeAirport = (code: AirportCode) => {
+    setAirport(code);
+    setTerminal(firstTerminalOf(code));
+  };
+
+  // Cambiando paese si passa al primo aeroporto di quel paese
+  const changeOriginCountry = (countryCode: string) => {
+    setOriginCountry(countryCode);
+    const first = getAirportsByCountry(countryCode)[0];
+    if (first) changeAirport(first.code);
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.label}>Aeroporto</Text>
-      <Chips
-        options={Object.values(AIRPORTS).map((a) => ({
-          id: a.code,
-          name: a.code,
-        }))}
-        value={airport}
-        onChange={setAirport}
+      <Text style={styles.label}>Paese di partenza</Text>
+      <Select
+        options={ORIGIN_COUNTRIES}
+        value={originCountry}
+        onChange={changeOriginCountry}
       />
 
-      <Text style={styles.label}>Terminal</Text>
-      <Chips
-        options={Object.values(TERMINALS).map((a) => ({
-          id: a.id,
-          name: a.name,
-        }))}
-        value={terminal}
-        onChange={setTerminal}
+      <Text style={styles.label}>Aeroporto</Text>
+      <Select
+        options={airportOptions}
+        value={airport}
+        onChange={changeAirport}
       />
+      {selectedAirport && !selectedAirport.calibrated && (
+        <Text style={styles.note}>
+          Tempi stimati: questo aeroporto non è ancora calibrato.
+        </Text>
+      )}
+
+      {terminals.length > 1 && (
+        <>
+          <Text style={styles.label}>Terminal</Text>
+          <Chips
+            options={terminals.map((t) => ({ id: t.id, name: t.name }))}
+            value={terminal}
+            onChange={setTerminal}
+          />
+        </>
+      )}
 
       <Text style={styles.label}>Compagnia</Text>
       <Select
@@ -116,7 +154,7 @@ export default function HomeScreen() {
 
       <Text style={styles.label}>Paese di destinazione</Text>
       <Select
-        options={Object.values(COUNTRIES)}
+        options={COUNTRIES}
         value={country}
         onChange={setCountry}
       />

@@ -1,5 +1,5 @@
 import { AIRLINES } from "./airlines";
-import { AIRPORTS, resolveTerminal } from "./airports";
+import { getAirport, resolveTerminal } from "./airports";
 import { requiresPassportControl } from "./countries";
 import { DEFAULT_MARGINS, type Margins } from "./margins";
 import type { Deadline, FlightInput, StepDuration, TripPlan } from "./types";
@@ -17,16 +17,22 @@ export function calculateTrip(
   input: FlightInput,
   margins: Margins = DEFAULT_MARGINS,
 ): TripPlan {
-  // Dati della nazione di arrivo
-  const destinationCountry = input.destinationCountry;
-  const passportControlRequired = requiresPassportControl(destinationCountry);
+  // Dati del terminal ed aeroporto
+  const airport = getAirport(input.airport);
+  if (!airport) {
+    // Non succede dalla UI: i codici arrivano dal catalogo
+    throw new Error(`Aeroporto sconosciuto: ${input.airport}`);
+  }
+  const terminal = resolveTerminal(airport, input.terminal);
+
+  // Passaporti: dipendono dal paese di partenza (quello dell'aeroporto) e da quello di arrivo
+  const passportControlRequired = requiresPassportControl(
+    airport.country,
+    input.destinationCountry,
+  );
 
   // Orario di partenza
   const departureTime = input.departureTime;
-
-  // Dati del terminal ed aeroporto
-  const airport = AIRPORTS[input.airport];
-  const terminal = resolveTerminal(airport, input.terminal);
   const walkToGateMinutes = passportControlRequired
     ? terminal.walkToGateMinutes.nonSchengen
     : terminal.walkToGateMinutes.schengen;

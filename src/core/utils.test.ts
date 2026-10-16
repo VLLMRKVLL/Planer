@@ -1,4 +1,4 @@
-import { AIRPORTS } from './airports';
+import { getAirport } from './airports';
 import { requiresPassportControl } from './countries';
 import {
   addMinutes,
@@ -31,22 +31,28 @@ describe('getTimeSlot', () => {
 });
 
 describe('requiresPassportControl', () => {
-  it('is false for Schengen countries', () => {
-    expect(requiresPassportControl('FR')).toBe(false);
-    expect(requiresPassportControl('CH')).toBe(false); // non UE ma Schengen
+  it('is false between Schengen countries', () => {
+    expect(requiresPassportControl('IT', 'FR')).toBe(false);
+    expect(requiresPassportControl('IT', 'CH')).toBe(false); // non UE ma Schengen
   });
 
-  it('is true for non-Schengen countries', () => {
-    expect(requiresPassportControl('GB')).toBe(true);
-    expect(requiresPassportControl('IE')).toBe(true); // UE ma non Schengen
+  it('is true when leaving or entering the Schengen area', () => {
+    expect(requiresPassportControl('IT', 'GB')).toBe(true);
+    expect(requiresPassportControl('IT', 'IE')).toBe(true); // UE ma non Schengen
+    expect(requiresPassportControl('GB', 'FR')).toBe(true); // da fuori Schengen verso Schengen
+  });
+
+  it('is false for domestic flights, even outside Schengen', () => {
+    expect(requiresPassportControl('IT', 'IT')).toBe(false);
+    expect(requiresPassportControl('GB', 'GB')).toBe(false);
   });
 
   it('ignores case and spaces', () => {
-    expect(requiresPassportControl(' fr ')).toBe(false);
+    expect(requiresPassportControl(' it ', ' fr ')).toBe(false);
   });
 
   it('is true for unknown codes (prudent default)', () => {
-    expect(requiresPassportControl('XX')).toBe(true);
+    expect(requiresPassportControl('IT', 'XX')).toBe(true);
   });
 });
 
@@ -65,7 +71,7 @@ describe('addMinutes / minutesBetween', () => {
 });
 
 describe('securityMinutesEndingAt', () => {
-  const bgy = AIRPORTS.BGY.terminals[0]; // earlyMorning 35, day 25, evening 20
+  const bgy = getAirport('BGY')!.terminals[0]; // earlyMorning 35, day 25, evening 20
 
   it('uses the slot of the queue when start and end agree', () => {
     expect(securityMinutesEndingAt(at(12), bgy)).toBe(25);

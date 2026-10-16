@@ -1,0 +1,49 @@
+# Aggiorna ogni mese il catalogo degli aeroporti da OurAirports.
+# Se il catalogo cambia apre (o aggiorna) una Pull Request: basta controllarla e fare il merge.
+# Richiede, nelle impostazioni del repository: Settings → Actions → General →
+# "Allow GitHub Actions to create and approve pull requests".
+
+name: Aggiorna catalogo aeroporti
+
+on:
+  schedule:
+    - cron: "0 6 1 * *" # il 1° di ogni mese alle 06:00 UTC
+  workflow_dispatch: # avvio manuale dalla pagina Actions
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Genera il catalogo
+        run: npm run data:airports
+
+      - name: Controlla che l'app funzioni ancora con i nuovi dati
+        run: |
+          npm test
+          npm run typecheck
+
+      - name: Apri la Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: chore/update-airports
+          delete-branch: true
+          add-paths: src/core/data/airports.catalog.json
+          commit-message: Aggiornato il catalogo degli aeroporti da OurAirports
+          title: Aggiornamento mensile del catalogo aeroporti
+          body: |
+            Catalogo rigenerato automaticamente da [OurAirports](https://ourairports.com/data/) (pubblico dominio).
+
+            Test e typecheck sono già passati con i nuovi dati. Controlla nel diff gli aeroporti aggiunti o rimossi, poi fai il merge.

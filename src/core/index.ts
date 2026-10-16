@@ -2,10 +2,15 @@
 export * from "./types";
 
 export {
-    AIRPORTS, resolveTerminal, type Airport,
+    getAirport,
+    getAirportsByCountry,
+    resolveTerminal,
+    type Airport,
     type AirportCode,
+    type AirportSize,
+    type CatalogAirport,
     type Terminal,
-    type TerminalId
+    type TerminalId,
 } from "./airports";
 
 export { DEFAULT_MARGINS } from "./margins";
