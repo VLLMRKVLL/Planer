@@ -15,8 +15,9 @@ import {
   calculateTrip,
   type AirlineId,
   type AirportCode,
-  type TerminalId,
+  type DeadlineId,
   type StepId,
+  type TerminalId,
 } from "@/core";
 
 import { Host } from "@expo/ui";
@@ -33,7 +34,13 @@ const STEP_LABELS: Record<StepId, string> = {
   security: "Controlli di sicurezza",
   passportControl: "Controllo passaporti",
   walkToGate: "Cammino al gate",
-  buffer: "Margine",
+  buffer: "Tempo libero al gate",
+};
+
+const DEADLINE_LABELS: Record<DeadlineId, string> = {
+  bagDropClose: "Chiusura banco",
+  gateClose: "Chiusura gate",
+  departure: "Partenza",
 };
 
 const formatTime = (d: Date) =>
@@ -142,11 +149,28 @@ export default function HomeScreen() {
           <Text style={styles.big}>
             Arriva in aeroporto alle {formatTime(plan.arriveAirportAt)}
           </Text>
-          {plan.steps.map((step) => (
-            <Text key={step.id}>
-              {STEP_LABELS[step.id]}: {step.minutes} min
-            </Text>
-          ))}
+
+          <View style={styles.timeline}>
+            {plan.timeline.map((step) => (
+              <View key={step.id} style={styles.timelineRow}>
+                <Text style={styles.time}>
+                  {formatTime(step.startAt)}–{formatTime(step.endAt)}
+                </Text>
+                <Text style={styles.stepLabel}>{STEP_LABELS[step.id]}</Text>
+                <Text style={styles.stepMinutes}>{step.minutes} min</Text>
+              </View>
+            ))}
+          </View>
+
+          <View style={styles.timeline}>
+            {plan.deadlines.map((deadline) => (
+              <View key={deadline.id} style={styles.timelineRow}>
+                <Text style={styles.time}>{formatTime(deadline.at)}</Text>
+                <Text style={styles.stepLabel}>{DEADLINE_LABELS[deadline.id]}</Text>
+              </View>
+            ))}
+          </View>
+
           <Text style={styles.note}>
             Vincolo decisivo:{" "}
             {plan.bindingConstraint === "gate"
@@ -166,16 +190,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: { padding: 16, gap: 8 },
   label: { fontWeight: "600", marginTop: 8 },
-  row: { flexDirection: "row", gap: 8, flexWrap: "wrap" },
-  chip: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "#208AEF",
-  },
-  chipActive: { backgroundColor: "#208AEF" },
-  chipTextActive: { color: "white" },
   input: { borderWidth: 1, borderColor: "#ccc", borderRadius: 8, padding: 10 },
   switchRow: {
     flexDirection: "row",
@@ -190,5 +204,10 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   big: { fontSize: 18, fontWeight: "700" },
+  timeline: { marginTop: 8, gap: 6 },
+  timelineRow: { flexDirection: "row", alignItems: "baseline", gap: 8 },
+  time: { width: 100, fontVariant: ["tabular-nums"], fontWeight: "600" },
+  stepLabel: { flex: 1 },
+  stepMinutes: { color: "#666", fontVariant: ["tabular-nums"] },
   note: { marginTop: 8, color: "#666" },
 });

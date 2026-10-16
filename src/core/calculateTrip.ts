@@ -1,11 +1,22 @@
 import { AIRLINES } from "./airlines";
 import { AIRPORTS, resolveTerminal } from "./airports";
 import { requiresPassportControl } from "./countries";
-import { DEFAULT_MARGINS } from "./margins";
-import type { FlightInput, TripPlan } from "./types";
-import { securityMinutesEndingAt, subtractMinutes } from "./utils";
+import { DEFAULT_MARGINS, type Margins } from "./margins";
+import type { Deadline, FlightInput, StepDuration, TripPlan } from "./types";
+import {
+  addMinutes,
+  buildTimeline,
+  minutesBetween,
+  securityMinutesEndingAt,
+  subtractMinutes,
+} from "./utils";
 
-export function calculateTrip(input: FlightInput): TripPlan | null {
+// Calcola a ritroso, dall'orario del volo, quando arrivare in aeroporto
+// e quando partire da casa. Funzione pura: stesso input → stesso output.
+export function calculateTrip(
+  input: FlightInput,
+  margins: Margins = DEFAULT_MARGINS,
+): TripPlan {
   // Dati della nazione di arrivo
   const destinationCountry = input.destinationCountry;
   const passportControlRequired = requiresPassportControl(destinationCountry);
@@ -35,7 +46,7 @@ export function calculateTrip(input: FlightInput): TripPlan | null {
   const needsBagDrop = input.hasCheckedBag || !input.onlineCheckInDone;
 
   // GATE => partenza - chiusura gate - margine gate
-  const gateEndingTime = subtractMinutes(gateCloseAt, DEFAULT_MARGINS.gate);
+  const gateEndingTime = subtractMinutes(gateCloseAt, margins.gate);
 
   // FINE_CONTROLLI => GATE - cammino - passaporti (se necessari)
   const securityChecksTimeEnd = subtractMinutes(
@@ -63,7 +74,7 @@ export function calculateTrip(input: FlightInput): TripPlan | null {
     departureTime,
     airline.bagDropCloseMinutes,
   );
-  const bagDropLimit = subtractMinutes(bagDropCloseAt, DEFAULT_MARGINS.bagDrop);
+  const bagDropLimit = subtractMinutes(bagDropCloseAt, margins.bagDrop);
   const arriveByBagDrop = needsBagDrop
     ? subtractMinutes(bagDropLimit, terminal.bagDropMinutes)
     : null;
@@ -75,5 +86,36 @@ export function calculateTrip(input: FlightInput): TripPlan | null {
   const arriveAirportAt = bagDropWins ? arriveByBagDrop : arriveByGate;
   const leaveHomeAt = subtractMinutes(arriveAirportAt, travelMinutes);
 
-  return null;
+  const steps: StepDuration[] = [{ id: "travel", minutes: travelMinutes }];
+  if (needsBagDrop)
+    steps.push({ id: "bagDrop", minutes: terminal.bagDropMinutes });
+  steps.push({ id: "security", minutes: securityMinutes });
+  if (passportControlRequired)
+    steps.push({ id: "passportControl", minutes: passportControlMinutes });
+  steps.push({ id: "walkToGate", minutes: walkToGateMinutes });
+
+  // Tempo libero al gate fino alla chiusura (almeno il margine del gate).
+  // Quando vince il banco si arriva prima e il tempo in più finisce qui.
+  // Limite noto: in quel caso i controlli avvengono prima del previsto e la
+  // fascia oraria reale potrebbe essere diversa da quella usata per il calcolo.
+  const totalMinutes = steps.reduce((sum, step) => sum + step.minutes, 0);
+  const atGateAt = addMinutes(leaveHomeAt, totalMinutes);
+  steps.push({ id: "buffer", minutes: minutesBetween(atGateAt, gateCloseAt) });
+
+  const timeline = buildTimeline(leaveHomeAt, steps);
+
+  // Scadenze da mostrare sulla timeline
+  const deadlines: Deadline[] = [];
+  if (needsBagDrop) deadlines.push({ id: "bagDropClose", at: bagDropCloseAt });
+  deadlines.push({ id: "gateClose", at: gateCloseAt });
+  deadlines.push({ id: "departure", at: departureTime });
+
+  return {
+    leaveHomeAt,
+    arriveAirportAt,
+    terminal: terminal.id,
+    timeline,
+    deadlines,
+    bindingConstraint: bagDropWins ? "bagDrop" : "gate",
+  };
 }

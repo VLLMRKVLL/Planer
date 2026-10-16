@@ -37,6 +37,11 @@ export interface TimelineStep {
   minutes: number;
 }
 
+export interface StepDuration {
+  id: StepId;
+  minutes: number;
+}
+
 // Il termine dello step
 export type DeadlineId = "bagDropClose" | "gateClose" | "departure";
 

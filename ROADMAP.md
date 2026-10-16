@@ -52,7 +52,7 @@ Obiettivo: un'app che useresti davvero prima di un volo, senza dover scrivere co
 
 - [w] Calibrare i tempi di `airports.ts` (fonti: siti degli aeroporti, esperienza personale)
 - [w] Verificare i tempi di `airlines.ts` sui siti delle compagnie
-- [ ] Risultato come timeline (ora di ogni tappa, non solo i minuti)
+- [x] Risultato come timeline (ora di ogni tappa, non solo i minuti)
 - [ ] Supporto al tema scuro (`userInterfaceStyle` è su `light`)
 
 ## Fase 2: Qualità e automazione
