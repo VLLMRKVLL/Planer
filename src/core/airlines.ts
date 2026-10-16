@@ -1,4 +1,13 @@
-import type { Airline, AirlineId } from './types';
+export type AirlineId = 'default' | 'ita' | 'ryanair' | 'easyjet' | 'wizzair';
+
+export interface Airline {
+  id: AirlineId;
+  name: string;
+  // Minuti prima della partenza in cui chiude il gate
+  gateCloseMinutes: number;
+  // Minuti prima della partenza in cui chiude il banco bagagli
+  bagDropCloseMinutes: number;
+}
 
 // Stime PROVVISORIE, da verificare sui siti delle compagnie.
 // "default" usa valori prudenti: si usa quando l'utente non indica la compagnia.

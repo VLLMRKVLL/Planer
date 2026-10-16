@@ -1,12 +1,11 @@
 import { useState } from "react";
 import {
-  Pressable,
   ScrollView,
   StyleSheet,
   Switch,
   Text,
   TextInput,
-  View,
+  View
 } from "react-native";
 
 import {
@@ -16,6 +15,7 @@ import {
   calculateTrip,
   type AirlineId,
   type AirportCode,
+  type TerminalId,
   type StepId,
 } from "@/core";
 
@@ -23,6 +23,7 @@ import { Host } from "@expo/ui";
 import { DatePicker } from "@expo/ui/swift-ui";
 import { datePickerStyle } from "@expo/ui/swift-ui/modifiers";
 
+import { Chips } from "@/components/Chips";
 import { Select } from "@/components/Select";
 
 // Etichette in italiano per le tappe (la UI traduce, core/ resta neutro)
@@ -32,7 +33,7 @@ const STEP_LABELS: Record<StepId, string> = {
   security: "Controlli di sicurezza",
   passportControl: "Controllo passaporti",
   walkToGate: "Cammino al gate",
-  margin: "Margine",
+  buffer: "Margine",
 };
 
 const formatTime = (d: Date) =>
@@ -40,6 +41,7 @@ const formatTime = (d: Date) =>
 
 export default function HomeScreen() {
   const [airport, setAirport] = useState<AirportCode>("MXP");
+  const [terminal, setTerminal] = useState<TerminalId>(AIRPORTS.MXP.terminals[0].id);
   const [airline, setAirline] = useState<AirlineId>("default");
   const [departureTime, setDepartureTime] = useState(new Date());
   const [country, setCountry] = useState("IT");
@@ -58,25 +60,35 @@ export default function HomeScreen() {
           hasCheckedBag,
           onlineCheckInDone,
           travelTimeMinutes: travel,
+          airline: airline,
+          terminal: terminal
         })
       : null;
+
+  // Cerco la lista dei terminal
+  const TERMINALS = AIRPORTS[airport].terminals;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.label}>Aeroporto</Text>
-      <View style={styles.row}>
-        {Object.values(AIRPORTS).map((a) => (
-          <Pressable
-            key={a.code}
-            onPress={() => setAirport(a.code)}
-            style={[styles.chip, airport === a.code && styles.chipActive]}
-          >
-            <Text style={airport === a.code && styles.chipTextActive}>
-              {a.code}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
+      <Chips
+        options={Object.values(AIRPORTS).map((a) => ({
+          id: a.code,
+          name: a.code,
+        }))}
+        value={airport}
+        onChange={setAirport}
+      />
+
+      <Text style={styles.label}>Terminal</Text>
+      <Chips
+        options={Object.values(TERMINALS).map((a) => ({
+          id: a.id,
+          name: a.name,
+        }))}
+        value={terminal}
+        onChange={setTerminal}
+      />
 
       <Text style={styles.label}>Compagnia</Text>
       <Select

@@ -1,31 +1,11 @@
 // Tipi condivisi dalla logica di calcolo. Nessuna dipendenza da React:
 // questo file deve poter girare ovunque (app, test, un domani un backend).
 
-export type AirportCode = 'LIN' | 'MXP' | 'BGY';
+import type { AirlineId } from "./airlines";
+import type { AirportCode, TerminalId } from "./airports";
 
 // Fasce orarie: earlyMorning (<8), day (8–18), evening (>=18)
-export type TimeSlot = 'earlyMorning' | 'day' | 'evening';
-
-export interface Airport {
-  code: AirportCode;
-  name: string;
-  // Minuti stimati per ogni tappa (valori provvisori, da calibrare)
-  securityMinutes: Record<TimeSlot, number>;
-  bagDropMinutes: number;
-  passportControlMinutes: number;
-  walkToGateMinutes: number;
-}
-
-export type AirlineId = 'default' | 'ita' | 'ryanair' | 'easyjet' | 'wizzair';
-
-export interface Airline {
-  id: AirlineId;
-  name: string;
-  // Minuti prima della partenza in cui chiude il gate
-  gateCloseMinutes: number;
-  // Minuti prima della partenza in cui chiude il banco bagagli
-  bagDropCloseMinutes: number;
-}
+export type TimeSlot = "earlyMorning" | "day" | "evening";
 
 export interface FlightInput {
   airport: AirportCode;
@@ -37,20 +17,39 @@ export interface FlightInput {
   travelTimeMinutes: number;
   // Opzionale: se manca usiamo valori prudenti (vedi airlines.ts)
   airline?: AirlineId;
+  terminal?: TerminalId;
 }
 
-export type StepId = 'travel' | 'bagDrop' | 'security' | 'passportControl' | 'walkToGate' | 'margin';
+// Passaggi da seguire in aeroporto
+export type StepId =
+  | "travel"
+  | "bagDrop"
+  | "security"
+  | "passportControl"
+  | "walkToGate"
+  | "buffer";   // margine per evitare problemi
 
-export interface Step {
+// Tempo che ci si mette ad effettuare questi step
+export interface TimelineStep {
   id: StepId;
+  startAt: Date;
+  endAt: Date;
   minutes: number;
+}
+
+// Il termine dello step
+export type DeadlineId = "bagDropClose" | "gateClose" | "departure";
+
+export interface Deadline {
+  id: DeadlineId;
+  at: Date;
 }
 
 export interface TripPlan {
   leaveHomeAt: Date;
   arriveAirportAt: Date;
-  // Tappe in ordine cronologico (da casa al gate)
-  steps: Step[];
-  // Quale vincolo ha determinato l'orario: chiusura gate o chiusura banco bagagli
-  bindingConstraint: 'gate' | 'bagDrop';
+  terminal: TerminalId;
+  timeline: TimelineStep[];
+  deadlines: Deadline[];
+  bindingConstraint: "gate" | "bagDrop";
 }
