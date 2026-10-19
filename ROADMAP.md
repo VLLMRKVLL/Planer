@@ -9,14 +9,14 @@ Ogni passo è una casella di controllo Markdown. GitHub la mostra come una check
 | Segno             | Significato                                |
 | ----------------- | ------------------------------------------ |
 | `- [ ]`           | da fare                                    |
-| `- [ ] 🚧`        | in corso (al massimo 1–2 passi alla volta) |
+| `- [w]`           | in corso (al massimo 1–2 passi alla volta) |
 | `- [x]`           | fatto                                      |
 | `- [ ] ~~testo~~` | scartato (scrivi anche il motivo)          |
 
 Il flusso per ogni passo:
 
-1. Metti 🚧 sul passo e crea un branch (es. `feat/scelta-compagnia`).
-2. Quando il lavoro è finito, nello **stesso commit** (o nella stessa PR) cambi `[ ]` in `[x]`, togli 🚧 e aggiungi una riga al [Diario](#diario).
+1. Metti `[w]` sul passo e crea un branch (es. `feat/scelta-compagnia`).
+2. Quando il lavoro è finito, nello **stesso commit** (o nella stessa PR) cambi `[w]` in `[x]` e aggiungi una riga al [Diario](#diario).
 3. Se scopri un lavoro nuovo, aggiungilo come passo nella fase giusta invece di farlo "di passaggio".
 
 Così la roadmap resta sempre allineata al codice: basta guardare la cronologia di git (`git log -p ROADMAP.md`) per sapere quando è stato chiuso ogni passo.
@@ -53,11 +53,11 @@ Obiettivo: un'app che useresti davvero prima di un volo, senza dover scrivere co
 - [x] Catalogo di tutti gli aeroporti con voli di linea (OurAirports), aggiornato ogni mese da GitHub Actions
 - [x] Paese di partenza e select dell'aeroporto filtrata per paese
 - [x] Controllo passaporti in base a partenza e destinazione (non più solo dall'Italia)
-- [w] Calibrare i tempi di `AIRPORT_PROFILES` (fonti: Carte dei Servizi degli aeroporti, siti, esperienza personale)
-- [ ] Rivedere i tempi generici di `DEFAULT_TERMINALS` per aeroporti grandi, medi e piccoli
-- [ ] Terminal da compagnia (`airlineTerminals`, es. easyJet a MXP → T2)
-- [w] Verificare i tempi di `airlines.ts` sui siti delle compagnie
-- [x] Risultato come timeline (ora di ogni tappa, non solo i minuti)
+- [x] Calibrare i tempi di `AIRPORT_PROFILES` (fonti: Carte dei Servizi degli aeroporti, siti, esperienza personale)
+- [x] Rivedere i tempi generici di `DEFAULT_TERMINALS` per aeroporti grandi, medi e piccoli
+- [x] Terminal da compagnia (`airlineTerminals`, es. easyJet a MXP → T2)
+- [x] Verificare i tempi di `airlines.ts` sui siti delle compagnie
+- [x] Risultato come timeline (ora di ogni tappa, non solo i minuti), provata su iPhone
 - [ ] Supporto al tema scuro (`userInterfaceStyle` è su `light`)
 
 ## Fase 2: Qualità e automazione
@@ -116,6 +116,7 @@ Le idee arrivano qui prima di entrare in una fase.
 
 Una riga per ogni passo chiuso, la più recente in alto. Formato: `AAAA-MM-GG: cosa è stato fatto (PR o commit)`.
 
+- 2026-10-19: tempi delle compagnie verificati sui siti (Ryanair gate 30' e banco 60', ITA gate 15' e banco 40'/60' Schengen/extra-Schengen), profili LIN/MXP/BGY e default per dimensione documentati, terminal da compagnia (easyJet a MXP → T2), timeline provata su iPhone, legenda della roadmap con `[w]`
 - 2026-10-16: catalogo aeroporti da OurAirports con aggiornamento mensile, paese di partenza, select aeroporti, passaporti in base a origine e destinazione
 - 2026-10-16: risultato come timeline con orari, buffer e scadenze; calcolo a ritroso con terminal, fascia della coda e margine sul banco
 - 2026-10-13: creata questa roadmap

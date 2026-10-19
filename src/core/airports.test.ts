@@ -26,6 +26,16 @@ describe('airport catalog', () => {
       expect(new Set(ids).size).toBe(ids.length); // nessun terminal doppio
     }
   });
+
+  it('maps airlines only to terminals that exist', () => {
+    for (const code of CALIBRATED_AIRPORT_CODES) {
+      const airport = getAirport(code)!;
+      const ids = airport.terminals.map((t) => t.id);
+      for (const terminal of Object.values(airport.airlineTerminals)) {
+        expect(ids).toContain(terminal);
+      }
+    }
+  });
 });
 
 describe('getAirport', () => {
@@ -72,5 +82,14 @@ describe('resolveTerminal', () => {
     expect(resolveTerminal(mxp, 'T2').id).toBe('T2');
     expect(resolveTerminal(mxp).id).toBe('T1');
     expect(resolveTerminal(getAirport('LIN')!, 'T2').id).toBe('T1');
+  });
+
+  it('uses the terminal of the airline when none is chosen', () => {
+    const mxp = getAirport('MXP')!;
+    expect(resolveTerminal(mxp, undefined, 'easyjet').id).toBe('T2');
+    expect(resolveTerminal(mxp, 'T1', 'easyjet').id).toBe('T1'); // vince la scelta
+    expect(resolveTerminal(mxp, undefined, 'ita').id).toBe('T1');
+    // Aeroporto senza mappa delle compagnie → primo terminal
+    expect(resolveTerminal(getAirport('LIN')!, undefined, 'easyjet').id).toBe('T1');
   });
 });

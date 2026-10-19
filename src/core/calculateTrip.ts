@@ -23,7 +23,7 @@ export function calculateTrip(
     // Non succede dalla UI: i codici arrivano dal catalogo
     throw new Error(`Aeroporto sconosciuto: ${input.airport}`);
   }
-  const terminal = resolveTerminal(airport, input.terminal);
+  const terminal = resolveTerminal(airport, input.terminal, input.airline);
 
   // Passaporti: dipendono dal paese di partenza (quello dell'aeroporto) e da quello di arrivo
   const passportControlRequired = requiresPassportControl(
@@ -76,10 +76,11 @@ export function calculateTrip(
     : securityChecksTimeStart;
 
   // ARRIVO (banco) ==> partenza - chiusura banco - margine banco - durata banco
-  const bagDropCloseAt = subtractMinutes(
-    departureTime,
-    airline.bagDropCloseMinutes,
-  );
+  // Per i voli extra-Schengen alcune compagnie chiudono il banco prima
+  const bagDropCloseMinutes = passportControlRequired
+    ? airline.bagDropCloseMinutes.nonSchengen
+    : airline.bagDropCloseMinutes.schengen;
+  const bagDropCloseAt = subtractMinutes(departureTime, bagDropCloseMinutes);
   const bagDropLimit = subtractMinutes(bagDropCloseAt, margins.bagDrop);
   const arriveByBagDrop = needsBagDrop
     ? subtractMinutes(bagDropLimit, terminal.bagDropMinutes)
