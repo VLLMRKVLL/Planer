@@ -14,6 +14,7 @@ import {
   calculateTrip,
   getAirport,
   getAirportsByCountry,
+  resolveTerminal,
   type AirlineId,
   type AirportCode,
   type DeadlineId,
@@ -52,15 +53,19 @@ const ORIGIN_COUNTRIES = COUNTRIES.filter(
   (c) => getAirportsByCountry(c.id).length > 0,
 );
 
-// Primo terminal di un aeroporto (i codici arrivano dal catalogo, quindi esiste)
-const firstTerminalOf = (code: AirportCode): TerminalId =>
-  getAirport(code)?.terminals[0].id ?? "T1";
+// Terminal proposto: quello della compagnia (es. easyJet a MXP → T2), altrimenti il primo
+const defaultTerminalOf = (code: AirportCode, airline: AirlineId): TerminalId => {
+  const airport = getAirport(code);
+  return airport ? resolveTerminal(airport, undefined, airline).id : "T1";
+};
 
 export default function HomeScreen() {
   const [originCountry, setOriginCountry] = useState("IT");
   const [airport, setAirport] = useState<AirportCode>("MXP");
-  const [terminal, setTerminal] = useState<TerminalId>(firstTerminalOf("MXP"));
   const [airline, setAirline] = useState<AirlineId>("default");
+  const [terminal, setTerminal] = useState<TerminalId>(
+    defaultTerminalOf("MXP", "default"),
+  );
   const [departureTime, setDepartureTime] = useState(new Date());
   const [country, setCountry] = useState("IT");
   const [hasCheckedBag, setHasCheckedBag] = useState(false);
@@ -93,7 +98,13 @@ export default function HomeScreen() {
   // Cambiando aeroporto il terminal precedente potrebbe non esistere: si riparte dal primo
   const changeAirport = (code: AirportCode) => {
     setAirport(code);
-    setTerminal(firstTerminalOf(code));
+    setTerminal(defaultTerminalOf(code, airline));
+  };
+
+  // Cambiando compagnia si propone il suo terminal (l'utente può comunque cambiarlo)
+  const changeAirline = (id: AirlineId) => {
+    setAirline(id);
+    setTerminal(defaultTerminalOf(airport, id));
   };
 
   // Cambiando paese si passa al primo aeroporto di quel paese
@@ -139,7 +150,7 @@ export default function HomeScreen() {
       <Select
         options={Object.values(AIRLINES)}
         value={airline}
-        onChange={setAirline}
+        onChange={changeAirline}
       />
 
       <Text style={styles.label}>Orario del volo</Text>

@@ -9,8 +9,8 @@ src/
     index.tsx          ← schermata principale: form + risultato
   core/                ← logica pura, zero React
     types.ts           ← tipi condivisi
-    airports.ts        ← tempi per aeroporto (stime da calibrare)
-    airlines.ts        ← chiusura gate / banco per compagnia
+    airports.ts        ← tempi per aeroporto e terminal per compagnia (stime documentate)
+    airlines.ts        ← chiusura gate / banco per compagnia (verificati sui siti)
     schengen.ts        ← paesi Schengen (ISO alpha-2)
     utils.ts           ← getTimeSlot, requiresPassportControl, subtractMinutes
     calculateTrip.ts   ← la funzione di calcolo principale
@@ -39,7 +39,7 @@ Si ragiona **a ritroso** dall'orario del volo.
    - cammino al gate
    - margine (15 min, `SAFETY_MARGIN_MINUTES`)
 2. **Vincolo gate:** `volo − chiusuraGate − somma(tappe)`
-3. **Vincolo banco** (solo se serve il banco): `volo − chiusuraBanco − tempoBanco`
+3. **Vincolo banco** (solo se serve il banco): `volo − chiusuraBanco − tempoBanco`. Alcune compagnie (es. ITA) chiudono il banco prima per i voli extra-Schengen
 4. **Arrivo in aeroporto** = il vincolo che dà l'orario **più presto** (cioè il più prudente)
 5. **Partenza da casa** = arrivo − minuti di viaggio
 
@@ -56,7 +56,7 @@ MXP, volo alle 10:00 per la Francia, bagaglio da stiva, compagnia non indicata (
 
 - La fascia oraria si calcola dall'orario **del volo**, non dall'ora in cui si passa davvero la sicurezza.
 - Le date sono in ora locale del telefono (va bene finché gli aeroporti sono tutti in Italia).
-- Tutti i tempi sono **stime provvisorie**.
+- I tempi delle compagnie sono verificati sui loro siti; quelli degli aeroporti sono **stime documentate** (`source` e `verifiedAt` in `airports.ts`).
 
 ## Output: `TripPlan`
 

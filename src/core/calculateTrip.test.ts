@@ -70,17 +70,17 @@ describe('calculateTrip', () => {
       'walkToGate',
       'buffer',
     ]);
-    // gate 18:10 − 15' margine − 10' cammino − 10' passaporti → controlli finiti alle 17:35
-    // controlli 15' (day) → arrivo 17:20
-    expect(hhmm(plan.arriveAirportAt)).toBe('17:20');
-    expect(hhmm(plan.leaveHomeAt)).toBe('16:50');
+    // gate 18:00 − 15' margine − 10' cammino − 15' passaporti → controlli finiti alle 17:20
+    // controlli 15' (day) → arrivo 17:05
+    expect(hhmm(plan.arriveAirportAt)).toBe('17:05');
+    expect(hhmm(plan.leaveHomeAt)).toBe('16:35');
     // Senza bagaglio non c'è la scadenza del banco
     expect(plan.deadlines.map((d) => d.id)).toEqual(['gateClose', 'departure']);
     expectConsistentTimeline(plan);
   });
 
   it('uses the security slot of the queue, not of the flight', () => {
-    // Volo serale (18:30) ma coda alle 17:20 → fascia day (15'), non evening (10')
+    // Volo serale (18:30) ma coda alle 17:20–17:35 → fascia day (15'), non evening (10')
     const plan = calculateTrip({
       airport: 'LIN',
       departureTime: at(18, 30),
@@ -112,23 +112,23 @@ describe('calculateTrip', () => {
   it('uses the bag drop deadline (with its margin) when it is stricter', () => {
     const plan = calculateTrip({
       airport: 'LIN',
-      departureTime: at(18, 30),
-      destinationCountry: 'IT',
+      departureTime: at(21),
+      destinationCountry: 'FR',
       hasCheckedBag: true,
       onlineCheckInDone: true,
       travelTimeMinutes: 20,
-      airline: 'ita',
+      airline: 'ryanair',
     });
-    // gate: 18:10 − 15' − 10' − 15' − 15' → 17:15
-    // banco: chiude 17:30 − 10' margine − 15' coda → 17:05 (più prudente)
+    // gate: 20:30 − 15' − 10' cammino − 10' controlli (evening) − 15' banco → 19:40
+    // banco: chiude 20:00 − 10' margine − 15' coda → 19:35 (più prudente)
     expect(plan.bindingConstraint).toBe('bagDrop');
-    expect(hhmm(plan.arriveAirportAt)).toBe('17:05');
+    expect(hhmm(plan.arriveAirportAt)).toBe('19:35');
     const bagDrop = plan.timeline.find((s) => s.id === 'bagDrop');
-    expect(hhmm(bagDrop!.endAt)).toBe('17:20'); // 10' prima della chiusura del banco
+    expect(hhmm(bagDrop!.endAt)).toBe('19:50'); // 10' prima della chiusura del banco
     expect(plan.deadlines.map((d) => [d.id, hhmm(d.at)])).toEqual([
-      ['bagDropClose', '17:30'],
-      ['gateClose', '18:10'],
-      ['departure', '18:30'],
+      ['bagDropClose', '20:00'],
+      ['gateClose', '20:30'],
+      ['departure', '21:00'],
     ]);
     expectConsistentTimeline(plan);
   });
@@ -136,15 +136,15 @@ describe('calculateTrip', () => {
   it('puts the extra time in the buffer when the bag drop wins', () => {
     const plan = calculateTrip({
       airport: 'LIN',
-      departureTime: at(18, 30),
-      destinationCountry: 'IT',
+      departureTime: at(21),
+      destinationCountry: 'FR',
       hasCheckedBag: true,
       onlineCheckInDone: true,
       travelTimeMinutes: 20,
-      airline: 'ita',
+      airline: 'ryanair',
     });
-    // Al gate alle 17:45, chiude alle 18:10 → 25' liberi (15' di margine + 10' extra)
-    expect(minutesOf(plan, 'buffer')).toBe(25);
+    // Al gate alle 20:10, chiude alle 20:30 → 20' liberi (15' di margine + 5' extra)
+    expect(minutesOf(plan, 'buffer')).toBe(20);
   });
 
   it('leaves exactly the gate margin as buffer when the gate wins', () => {
@@ -173,8 +173,8 @@ describe('calculateTrip', () => {
       },
       { gate: 0, bagDrop: 0 },
     );
-    // Senza margine si arriva al gate esattamente alla chiusura (18:10)
-    expect(hhmm(plan.arriveAirportAt)).toBe('17:35');
+    // Senza margine si arriva al gate esattamente alla chiusura (18:00)
+    expect(hhmm(plan.arriveAirportAt)).toBe('17:20');
     expect(minutesOf(plan, 'buffer')).toBe(0);
     expectConsistentTimeline(plan);
   });
@@ -243,5 +243,36 @@ describe('calculateTrip', () => {
     expect(calculateTrip({ ...base, airport: 'MXP', terminal: 'T2' }).terminal).toBe('T2');
     // T2 non esiste a Linate → si usa il primo terminal
     expect(calculateTrip({ ...base, airport: 'LIN', terminal: 'T2' }).terminal).toBe('T1');
+  });
+
+  it('uses the terminal of the airline when none is chosen', () => {
+    const base = {
+      airport: 'MXP',
+      departureTime: at(12),
+      destinationCountry: 'FR',
+      hasCheckedBag: false,
+      onlineCheckInDone: true,
+      travelTimeMinutes: 30,
+    };
+    expect(calculateTrip({ ...base, airline: 'easyjet' }).terminal).toBe('T2');
+    expect(calculateTrip({ ...base, airline: 'ryanair' }).terminal).toBe('T1');
+    // Il terminal scelto a mano vince su quello della compagnia
+    expect(calculateTrip({ ...base, airline: 'easyjet', terminal: 'T1' }).terminal).toBe('T1');
+  });
+
+  it('closes the bag drop earlier for non-Schengen flights when the airline does', () => {
+    const bagDropCloseFor = (destinationCountry: string) =>
+      calculateTrip({
+        airport: 'MXP',
+        departureTime: at(12),
+        destinationCountry,
+        hasCheckedBag: true,
+        onlineCheckInDone: true,
+        travelTimeMinutes: 30,
+        airline: 'ita',
+      }).deadlines.find((d) => d.id === 'bagDropClose')?.at;
+    // ITA: 40' per Schengen, 60' per extra-Schengen
+    expect(hhmm(bagDropCloseFor('FR')!)).toBe('11:20');
+    expect(hhmm(bagDropCloseFor('GB')!)).toBe('11:00');
   });
 });
