@@ -2,7 +2,7 @@
 // quella cartella come una pagina dell'app.
 import { fireEvent, render, screen } from "@testing-library/react-native";
 
-import HomeScreen from "@/app/index";
+import HomeScreen from "@/app/(calculator)/index";
 
 describe("HomeScreen", () => {
   it("shows the form and a result with the default values", async () => {

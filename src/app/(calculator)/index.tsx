@@ -39,9 +39,8 @@ const defaultTerminalOf = (
   return airport ? resolveTerminal(airport, undefined, airline).id : "T1";
 };
 
-export default function HomeScreen() {
+export default function Calculator() {
   const colors = useTheme();
-  // Gli stili si ricalcolano solo quando cambia il tema, non a ogni render
   const styles = useMemo(() => makeStyles(colors), [colors]);
 
   const [originCountry, setOriginCountry] = useState("IT");

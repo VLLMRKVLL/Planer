@@ -75,8 +75,8 @@ Obiettivo: una UI tutta mia, i voli salvati sul telefono e un avviso quando è o
 
 **Navigazione e UI**
 
-- [ ] Navigazione a tab: "Calcola" e "I miei voli"
-- [ ] Rivedere la pagina "Calcola" con una UI mia (stile, componenti, gerarchia delle informazioni)
+- [x] Navigazione a tab: "Calcola" e "I miei voli"
+- [w] Rivedere la pagina "Calcola" con una UI mia (stile, componenti, gerarchia delle informazioni)
 
 **Voli salvati (sul telefono)**
 
@@ -137,6 +137,7 @@ Le idee arrivano qui prima di entrare in una fase.
 
 Una riga per ogni passo chiuso, la più recente in alto. Formato: `AAAA-MM-GG: cosa è stato fatto (PR o commit)`.
 
+- 2026-10-21: navigazione a tab con `NativeTabs` (tab bar nativa di iOS, icone SF Symbols): tab "Calcolatore" nel gruppo `(calculator)` sulla route `/` e tab "I miei voli" in `flights/` con un segnaposto, uno `Stack` per tab per il titolo e le future pagine di dettaglio; test aggiornato al nuovo percorso; `docs/02-architettura.md` riscritto e allineato al codice
 - 2026-10-21: riorganizzata la roadmap: Fase 3 "I miei voli" (tab, UI propria della pagina Calcola, voli salvati in locale, notifiche), Fase 4 dati reali dal numero di volo con piano gratuito e proxy Supabase, nuova Fase 5 account, pubblicazione spostata in Fase 6
 - 2026-10-20: Fase 2 completata: workflow CI (`.github/workflows/ci.yml`) con test, typecheck, lint ed `expo-doctor` a ogni PR e dopo ogni merge su `main`, Node 24 da `.nvmrc`; test dei casi limite di `calculateTrip` (mezzanotte, alba, 0 minuti); risultato estratto in `TripResult` e test dei componenti con `@testing-library/react-native` (53 test)
 - 2026-10-20: licenza MIT (file `LICENSE`, campo `license` in `package.json`, sezione nel README); chiusa la Fase 0
