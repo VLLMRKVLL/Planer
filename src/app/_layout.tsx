@@ -2,7 +2,6 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from "expo-router";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { useColorScheme } from "react-native";
 
-// Layout radice: per ora una sola schermata dentro uno Stack
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const theme = colorScheme !== "dark" ? DefaultTheme : DarkTheme;
