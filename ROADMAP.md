@@ -34,7 +34,7 @@ Obiettivo: un progetto che parte, con la logica di calcolo testata e documentata
 - [x] Documentazione in `docs/`
 - [x] PR iniziale mergiata
 - [x] Primo `npm run lint` in locale (installa `eslint-config-expo`) e correzione degli eventuali errori
-- [ ] Scegliere la licenza (consigliata MIT) e aggiungere il file `LICENSE`
+- [x] Scegliere la licenza (MIT) e aggiungere il file `LICENSE`
 
 ## Fase 1: MVP usabile
 
@@ -116,6 +116,7 @@ Le idee arrivano qui prima di entrare in una fase.
 
 Una riga per ogni passo chiuso, la più recente in alto. Formato: `AAAA-MM-GG: cosa è stato fatto (PR o commit)`.
 
+- 2026-10-20: licenza MIT (file `LICENSE`, campo `license` in `package.json`, sezione nel README); chiusa la Fase 0
 - 2026-10-19: tempi delle compagnie verificati sui siti (Ryanair gate 30' e banco 60', ITA gate 15' e banco 40'/60' Schengen/extra-Schengen), profili LIN/MXP/BGY e default per dimensione documentati, terminal da compagnia (easyJet a MXP → T2), timeline provata su iPhone, legenda della roadmap con `[w]`
 - 2026-10-16: catalogo aeroporti da OurAirports con aggiornamento mensile, paese di partenza, select aeroporti, passaporti in base a origine e destinazione
 - 2026-10-16: risultato come timeline con orari, buffer e scadenze; calcolo a ritroso con terminal, fascia della coda e margine sul banco

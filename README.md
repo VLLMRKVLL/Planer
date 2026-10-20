@@ -40,3 +40,7 @@ Oppure dalla pagina **Actions** di GitHub, con *Run workflow*.
 ## Roadmap
 
 Fasi, passi da fare e come segnarli: [ROADMAP.md](ROADMAP.md).
+
+## Licenza
+
+[MIT](LICENSE). I dati degli aeroporti vengono da [OurAirports](https://ourairports.com/data/) (pubblico dominio).
