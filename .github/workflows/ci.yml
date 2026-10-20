@@ -25,7 +25,9 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          # Stessa versione di Node (e quindi di npm) usata in locale, da .nvmrc:
+          # npm 10 e npm 11 leggono il package-lock.json in modo diverso
+          node-version-file: .nvmrc
           cache: npm
 
       # npm ci installa esattamente le versioni del package-lock.json
@@ -39,3 +41,7 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      # Controlla dipendenze e configurazione di Expo (versioni compatibili con la SDK)
+      - name: Expo doctor
+        run: npx expo-doctor
