@@ -275,4 +275,52 @@ describe('calculateTrip', () => {
     expect(hhmm(bagDropCloseFor('FR')!)).toBe('11:20');
     expect(hhmm(bagDropCloseFor('GB')!)).toBe('11:00');
   });
+
+  describe('edge cases', () => {
+    it('goes back to the previous day for a flight just after midnight', () => {
+      const plan = calculateTrip({
+        airport: 'MXP',
+        departureTime: at(0, 30), // 1 giugno, 00:30
+        destinationCountry: 'FR',
+        hasCheckedBag: false,
+        onlineCheckInDone: true,
+        travelTimeMinutes: 30,
+      });
+      // gate 00:00 − 15' margine → 23:45 del 31 maggio − 15' cammino → controlli finiti alle 23:30
+      // controlli 20' (evening) → arrivo 23:10, partenza da casa 22:40 del giorno prima
+      expect(hhmm(plan.arriveAirportAt)).toBe('23:10');
+      expect(hhmm(plan.leaveHomeAt)).toBe('22:40');
+      expect(plan.leaveHomeAt.getDate()).toBe(31);
+      expect(plan.deadlines.find((d) => d.id === 'gateClose')?.at.getDate()).toBe(1);
+      expectConsistentTimeline(plan);
+    });
+
+    it('uses the early morning queue for a flight at dawn', () => {
+      const plan = calculateTrip({
+        airport: 'BGY',
+        departureTime: at(6),
+        destinationCountry: 'FR',
+        hasCheckedBag: false,
+        onlineCheckInDone: true,
+        travelTimeMinutes: 30,
+      });
+      // gate 5:30 − 15' − 10' cammino → coda dalle 4:30 alle 5:05: fascia earlyMorning (35')
+      expect(minutesOf(plan, 'security')).toBe(35);
+      expectConsistentTimeline(plan);
+    });
+
+    it('handles a trip of 0 minutes (already at the airport)', () => {
+      const plan = calculateTrip({
+        airport: 'LIN',
+        departureTime: at(12),
+        destinationCountry: 'IT',
+        hasCheckedBag: false,
+        onlineCheckInDone: true,
+        travelTimeMinutes: 0,
+      });
+      expect(plan.leaveHomeAt).toEqual(plan.arriveAirportAt);
+      expect(minutesOf(plan, 'travel')).toBe(0);
+      expectConsistentTimeline(plan);
+    });
+  });
 });
