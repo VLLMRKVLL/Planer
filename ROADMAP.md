@@ -64,7 +64,7 @@ Obiettivo: un'app che useresti davvero prima di un volo, senza dover scrivere co
 
 Obiettivo: ogni modifica viene controllata in automatico, così puoi cambiare il codice senza paura.
 
-- [ ] GitHub Actions: `npm test`, `npm run typecheck` e `npm run lint` a ogni PR
+- [x] GitHub Actions: `npm test`, `npm run typecheck` e `npm run lint` a ogni PR
 - [ ] `npx expo-doctor` pulito
 - [ ] Test dei componenti con `@testing-library/react-native` (almeno il form e `TripResult`)
 - [ ] Test per i casi limite di `calculateTrip` (volo a mezzanotte, viaggio di 0 minuti)
@@ -73,8 +73,8 @@ Obiettivo: ogni modifica viene controllata in automatico, così puoi cambiare il
 
 Obiettivo: l'app si ricorda di te e ti avvisa quando è ora di uscire.
 
-- [ ] Salvare sul telefono le preferenze (aeroporto abituale, minuti di viaggio, compagnia)
 - [ ] Salvare un volo pianificato e mostrarlo all'apertura dell'app
+- [ ] Salvare sul telefono le preferenze (aeroporto abituale, minuti di viaggio, compagnia)
 - [ ] Notifica locale "È ora di partire" all'orario calcolato (`expo-notifications`)
 - [ ] Notifica di anticipo configurabile (es. 15 minuti prima)
 - [ ] Richiede una **development build** (`eas build --profile development`): Expo Go non basta più per alcuni moduli nativi
@@ -116,6 +116,7 @@ Le idee arrivano qui prima di entrare in una fase.
 
 Una riga per ogni passo chiuso, la più recente in alto. Formato: `AAAA-MM-GG: cosa è stato fatto (PR o commit)`.
 
+- 2026-10-20: workflow CI (`.github/workflows/ci.yml`): test, typecheck e lint a ogni PR e dopo ogni merge su `main`
 - 2026-10-20: licenza MIT (file `LICENSE`, campo `license` in `package.json`, sezione nel README); chiusa la Fase 0
 - 2026-10-20: tema scuro che segue il sistema (`userInterfaceStyle: "automatic"`): palette chiara/scura in `constants/theme.ts`, hook `useTheme`, tema di navigazione in `_layout.tsx`, componente `ThemedText`, stili da `makeStyles` con `useMemo`; provato su iPhone
 - 2026-10-19: tempi delle compagnie verificati sui siti (Ryanair gate 30' e banco 60', ITA gate 15' e banco 40'/60' Schengen/extra-Schengen), profili LIN/MXP/BGY e default per dimensione documentati, terminal da compagnia (easyJet a MXP → T2), timeline provata su iPhone, legenda della roadmap con `[w]`

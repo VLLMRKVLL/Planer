@@ -1,0 +1,41 @@
+# Controlla ogni Pull Request (e main dopo ogni merge) con test, typecheck e lint.
+# Se un passo fallisce la PR mostra la crocetta rossa e si vede subito quale dei tre.
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Il workflow legge e basta: nessun permesso di scrittura
+permissions:
+  contents: read
+
+# Un nuovo push sulla stessa PR annulla il controllo precedente, ormai inutile
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # npm ci installa esattamente le versioni del package-lock.json
+      - run: npm ci
+
+      - name: Test
+        run: npm test
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
