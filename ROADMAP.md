@@ -58,7 +58,7 @@ Obiettivo: un'app che useresti davvero prima di un volo, senza dover scrivere co
 - [x] Terminal da compagnia (`airlineTerminals`, es. easyJet a MXP → T2)
 - [x] Verificare i tempi di `airlines.ts` sui siti delle compagnie
 - [x] Risultato come timeline (ora di ogni tappa, non solo i minuti), provata su iPhone
-- [w] Supporto al tema scuro (`userInterfaceStyle` è su `light`)
+- [x] Supporto al tema scuro
 
 ## Fase 2: Qualità e automazione
 
