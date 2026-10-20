@@ -49,6 +49,7 @@
     "data:airports": "node scripts/generate-airports.mjs"
   },
   "private": true,
+  "license": "MIT",
   "jest": {
     "preset": "jest-expo"
   }
