@@ -16,6 +16,8 @@ src/
     calculateTrip.ts   ← la funzione di calcolo principale
     index.ts           ← "barrel": l'API pubblica di core/
     *.test.ts          ← test Jest accanto al file che testano
+  components/          ← componenti riutilizzabili (ThemedText, Chips, Select, TripResult)
+  __tests__/           ← test delle schermate (fuori da app/: lì ogni file diventa una pagina)
 ```
 
 **Nota:** nel piano originale `core/` stava nella root. Il template SDK 57 però mette tutto il codice in `src/` e definisce l'alias `@/*` → `./src/*`, quindi ho messo la logica in `src/core/`. La UI la importa con `import { calculateTrip } from '@/core'`.

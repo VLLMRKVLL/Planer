@@ -9,9 +9,12 @@ Tempi calibrati per Linate (LIN), Malpensa (MXP) e Bergamo (BGY); tutti gli altr
 ```bash
 npm install
 npm start        # apre Expo: scansiona il QR con Expo Go sull'iPhone
-npm test         # test Jest della logica in src/core
+npm test         # test Jest: logica in src/core e componenti
 npm run typecheck
+npm run lint
 ```
+
+Gli stessi controlli (più `npx expo-doctor`) girano in automatico su ogni Pull Request con il workflow [`ci.yml`](.github/workflows/ci.yml).
 
 > Su Windows, se PowerShell blocca `npm`/`npx` con un errore di *ExecutionPolicy*, vedi [docs/01-setup.md](docs/01-setup.md#windows-errore-executionpolicy).
 

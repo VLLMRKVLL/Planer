@@ -30,10 +30,11 @@ In `tsconfig.json` ho aggiunto `"types": ["jest"]`: da TypeScript 6 i tipi globa
 | Comando | Cosa fa |
 |---|---|
 | `npm start` | Avvia il dev server Expo; apri l'app con Expo Go |
-| `npm test` | Esegue i test (`*.test.ts`) |
+| `npm test` | Esegue i test (`*.test.ts` e `*.test.tsx`) |
 | `npm test -- --watch` | Rilancia i test a ogni salvataggio |
 | `npm run typecheck` | Controlla i tipi senza produrre file |
 | `npm run lint` | ESLint con la config di Expo (al primo avvio la installa) |
+| `npx expo-doctor` | Controlla dipendenze e configurazione di Expo |
 
 ## Windows: errore ExecutionPolicy
 
