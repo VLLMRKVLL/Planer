@@ -1,6 +1,11 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useMemo } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
 
 import type { SelectOption } from "./Select";
+import { ThemedText } from "./ThemedText";
+
+import type { Palette } from "@/constants/theme";
+import { useTheme } from "@/hooks/useTheme";
 
 type ChipsProps<T extends string> = {
   options: readonly SelectOption<T>[];
@@ -14,6 +19,10 @@ export function Chips<T extends string>({
   value,
   onChange,
 }: ChipsProps<T>) {
+  const colors = useTheme();
+  // Gli stili si ricalcolano solo quando cambia il tema
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+
   return (
     <View style={styles.row}>
       {options.map((o) => {
@@ -24,7 +33,10 @@ export function Chips<T extends string>({
             onPress={() => onChange(o.id)}
             style={[styles.chip, active && styles.chipActive]}
           >
-            <Text style={active && styles.chipTextActive}>{o.name}</Text>
+            {/* Il colore normale arriva da ThemedText, l'attivo lo sovrascrive */}
+            <ThemedText style={active && styles.chipTextActive}>
+              {o.name}
+            </ThemedText>
           </Pressable>
         );
       })}
@@ -32,15 +44,17 @@ export function Chips<T extends string>({
   );
 }
 
-const styles = StyleSheet.create({
-  row: { flexDirection: "row", gap: 8, flexWrap: "wrap" },
-  chip: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "#208AEF",
-  },
-  chipActive: { backgroundColor: "#208AEF" },
-  chipTextActive: { color: "white" },
-});
+function makeStyles(colors: Palette) {
+  return StyleSheet.create({
+    row: { flexDirection: "row", gap: 8, flexWrap: "wrap" },
+    chip: {
+      paddingVertical: 8,
+      paddingHorizontal: 16,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.accent,
+    },
+    chipActive: { backgroundColor: colors.accent },
+    chipTextActive: { color: colors.onAccent },
+  });
+}

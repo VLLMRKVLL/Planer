@@ -58,7 +58,7 @@ Obiettivo: un'app che useresti davvero prima di un volo, senza dover scrivere co
 - [x] Terminal da compagnia (`airlineTerminals`, es. easyJet a MXP → T2)
 - [x] Verificare i tempi di `airlines.ts` sui siti delle compagnie
 - [x] Risultato come timeline (ora di ogni tappa, non solo i minuti), provata su iPhone
-- [ ] Supporto al tema scuro (`userInterfaceStyle` è su `light`)
+- [x] Supporto al tema scuro
 
 ## Fase 2: Qualità e automazione
 
@@ -117,6 +117,7 @@ Le idee arrivano qui prima di entrare in una fase.
 Una riga per ogni passo chiuso, la più recente in alto. Formato: `AAAA-MM-GG: cosa è stato fatto (PR o commit)`.
 
 - 2026-10-20: licenza MIT (file `LICENSE`, campo `license` in `package.json`, sezione nel README); chiusa la Fase 0
+- 2026-10-20: tema scuro che segue il sistema (`userInterfaceStyle: "automatic"`): palette chiara/scura in `constants/theme.ts`, hook `useTheme`, tema di navigazione in `_layout.tsx`, componente `ThemedText`, stili da `makeStyles` con `useMemo`; provato su iPhone
 - 2026-10-19: tempi delle compagnie verificati sui siti (Ryanair gate 30' e banco 60', ITA gate 15' e banco 40'/60' Schengen/extra-Schengen), profili LIN/MXP/BGY e default per dimensione documentati, terminal da compagnia (easyJet a MXP → T2), timeline provata su iPhone, legenda della roadmap con `[w]`
 - 2026-10-16: catalogo aeroporti da OurAirports con aggiornamento mensile, paese di partenza, select aeroporti, passaporti in base a origine e destinazione
 - 2026-10-16: risultato come timeline con orari, buffer e scadenze; calcolo a ritroso con terminal, fascia della coda e margine sul banco

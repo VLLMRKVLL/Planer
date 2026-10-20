@@ -1,12 +1,5 @@
-import { useState } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  TextInput,
-  View
-} from "react-native";
+import { useMemo, useState } from "react";
+import { ScrollView, StyleSheet, Switch, TextInput, View } from "react-native";
 
 import {
   AIRLINES,
@@ -28,6 +21,10 @@ import { datePickerStyle } from "@expo/ui/swift-ui/modifiers";
 
 import { Chips } from "@/components/Chips";
 import { Select } from "@/components/Select";
+import { ThemedText } from "@/components/ThemedText";
+
+import type { Palette } from "@/constants/theme";
+import { useTheme } from "@/hooks/useTheme";
 
 // Etichette in italiano per le tappe (la UI traduce, core/ resta neutro)
 const STEP_LABELS: Record<StepId, string> = {
@@ -54,12 +51,19 @@ const ORIGIN_COUNTRIES = COUNTRIES.filter(
 );
 
 // Terminal proposto: quello della compagnia (es. easyJet a MXP → T2), altrimenti il primo
-const defaultTerminalOf = (code: AirportCode, airline: AirlineId): TerminalId => {
+const defaultTerminalOf = (
+  code: AirportCode,
+  airline: AirlineId,
+): TerminalId => {
   const airport = getAirport(code);
   return airport ? resolveTerminal(airport, undefined, airline).id : "T1";
 };
 
 export default function HomeScreen() {
+  const colors = useTheme();
+  // Gli stili si ricalcolano solo quando cambia il tema, non a ogni render
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+
   const [originCountry, setOriginCountry] = useState("IT");
   const [airport, setAirport] = useState<AirportCode>("MXP");
   const [airline, setAirline] = useState<AirlineId>("default");
@@ -84,7 +88,7 @@ export default function HomeScreen() {
           onlineCheckInDone,
           travelTimeMinutes: travel,
           airline: airline,
-          terminal: terminal
+          terminal: terminal,
         })
       : null;
 
@@ -116,28 +120,28 @@ export default function HomeScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.label}>Paese di partenza</Text>
+      <ThemedText style={styles.label}>Paese di partenza</ThemedText>
       <Select
         options={ORIGIN_COUNTRIES}
         value={originCountry}
         onChange={changeOriginCountry}
       />
 
-      <Text style={styles.label}>Aeroporto</Text>
+      <ThemedText style={styles.label}>Aeroporto</ThemedText>
       <Select
         options={airportOptions}
         value={airport}
         onChange={changeAirport}
       />
       {selectedAirport && !selectedAirport.calibrated && (
-        <Text style={styles.note}>
+        <ThemedText style={styles.note}>
           Tempi stimati: questo aeroporto non è ancora calibrato.
-        </Text>
+        </ThemedText>
       )}
 
       {terminals.length > 1 && (
         <>
-          <Text style={styles.label}>Terminal</Text>
+          <ThemedText style={styles.label}>Terminal</ThemedText>
           <Chips
             options={terminals.map((t) => ({ id: t.id, name: t.name }))}
             value={terminal}
@@ -146,14 +150,14 @@ export default function HomeScreen() {
         </>
       )}
 
-      <Text style={styles.label}>Compagnia</Text>
+      <ThemedText style={styles.label}>Compagnia</ThemedText>
       <Select
         options={Object.values(AIRLINES)}
         value={airline}
         onChange={changeAirline}
       />
 
-      <Text style={styles.label}>Orario del volo</Text>
+      <ThemedText style={styles.label}>Orario del volo</ThemedText>
       <Host matchContents>
         <DatePicker
           selection={departureTime}
@@ -163,14 +167,10 @@ export default function HomeScreen() {
         />
       </Host>
 
-      <Text style={styles.label}>Paese di destinazione</Text>
-      <Select
-        options={COUNTRIES}
-        value={country}
-        onChange={setCountry}
-      />
+      <ThemedText style={styles.label}>Paese di destinazione</ThemedText>
+      <Select options={COUNTRIES} value={country} onChange={setCountry} />
 
-      <Text style={styles.label}>Minuti di viaggio da casa</Text>
+      <ThemedText style={styles.label}>Minuti di viaggio da casa</ThemedText>
       <TextInput
         style={styles.input}
         value={travelMinutes}
@@ -179,11 +179,11 @@ export default function HomeScreen() {
       />
 
       <View style={styles.switchRow}>
-        <Text>Bagaglio da stiva</Text>
+        <ThemedText>Bagaglio da stiva</ThemedText>
         <Switch value={hasCheckedBag} onValueChange={setHasCheckedBag} />
       </View>
       <View style={styles.switchRow}>
-        <Text>Check-in online fatto</Text>
+        <ThemedText>Check-in online fatto</ThemedText>
         <Switch
           value={onlineCheckInDone}
           onValueChange={setOnlineCheckInDone}
@@ -192,21 +192,25 @@ export default function HomeScreen() {
 
       {plan ? (
         <View style={styles.result}>
-          <Text style={styles.big}>
+          <ThemedText style={styles.big}>
             Parti da casa alle {formatTime(plan.leaveHomeAt)}
-          </Text>
-          <Text style={styles.big}>
+          </ThemedText>
+          <ThemedText style={styles.big}>
             Arriva in aeroporto alle {formatTime(plan.arriveAirportAt)}
-          </Text>
+          </ThemedText>
 
           <View style={styles.timeline}>
             {plan.timeline.map((step) => (
               <View key={step.id} style={styles.timelineRow}>
-                <Text style={styles.time}>
+                <ThemedText style={styles.time}>
                   {formatTime(step.startAt)}–{formatTime(step.endAt)}
-                </Text>
-                <Text style={styles.stepLabel}>{STEP_LABELS[step.id]}</Text>
-                <Text style={styles.stepMinutes}>{step.minutes} min</Text>
+                </ThemedText>
+                <ThemedText style={styles.stepLabel}>
+                  {STEP_LABELS[step.id]}
+                </ThemedText>
+                <ThemedText style={styles.stepMinutes}>
+                  {step.minutes} min
+                </ThemedText>
               </View>
             ))}
           </View>
@@ -214,49 +218,63 @@ export default function HomeScreen() {
           <View style={styles.timeline}>
             {plan.deadlines.map((deadline) => (
               <View key={deadline.id} style={styles.timelineRow}>
-                <Text style={styles.time}>{formatTime(deadline.at)}</Text>
-                <Text style={styles.stepLabel}>{DEADLINE_LABELS[deadline.id]}</Text>
+                <ThemedText style={styles.time}>
+                  {formatTime(deadline.at)}
+                </ThemedText>
+                <ThemedText style={styles.stepLabel}>
+                  {DEADLINE_LABELS[deadline.id]}
+                </ThemedText>
               </View>
             ))}
           </View>
 
-          <Text style={styles.note}>
+          <ThemedText style={styles.note}>
             Vincolo decisivo:{" "}
             {plan.bindingConstraint === "gate"
               ? "chiusura gate"
               : "chiusura banco bagagli"}
-          </Text>
+          </ThemedText>
         </View>
       ) : (
-        <Text style={styles.note}>
+        <ThemedText style={styles.note}>
           Compila i campi per vedere il risultato.
-        </Text>
+        </ThemedText>
       )}
     </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { padding: 16, gap: 8 },
-  label: { fontWeight: "600", marginTop: 8 },
-  input: { borderWidth: 1, borderColor: "#ccc", borderRadius: 8, padding: 10 },
-  switchRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  result: {
-    marginTop: 16,
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: "#EEF6FF",
-    gap: 4,
-  },
-  big: { fontSize: 18, fontWeight: "700" },
-  timeline: { marginTop: 8, gap: 6 },
-  timelineRow: { flexDirection: "row", alignItems: "baseline", gap: 8 },
-  time: { width: 100, fontVariant: ["tabular-nums"], fontWeight: "600" },
-  stepLabel: { flex: 1 },
-  stepMinutes: { color: "#666", fontVariant: ["tabular-nums"] },
-  note: { marginTop: 8, color: "#666" },
-});
+// Colori dalla palette: il colore normale del testo lo dà già ThemedText
+function makeStyles(colors: Palette) {
+  return StyleSheet.create({
+    container: { padding: 16, gap: 8 },
+    label: { fontWeight: "600", marginTop: 8 },
+    input: {
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 8,
+      padding: 10,
+      // TextInput non è un Text: il colore va dato a mano
+      color: colors.text,
+    },
+    switchRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    result: {
+      marginTop: 16,
+      padding: 16,
+      borderRadius: 12,
+      backgroundColor: colors.card,
+      gap: 4,
+    },
+    big: { fontSize: 18, fontWeight: "700" },
+    timeline: { marginTop: 8, gap: 6 },
+    timelineRow: { flexDirection: "row", alignItems: "baseline", gap: 8 },
+    time: { width: 100, fontVariant: ["tabular-nums"], fontWeight: "600" },
+    stepLabel: { flex: 1 },
+    stepMinutes: { color: colors.textMuted, fontVariant: ["tabular-nums"] },
+    note: { marginTop: 8, color: colors.textMuted },
+  });
+}
