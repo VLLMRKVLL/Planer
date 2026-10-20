@@ -36,7 +36,7 @@ Obiettivo: un progetto che parte, con la logica di calcolo testata e documentata
 - [x] Primo `npm run lint` in locale (installa `eslint-config-expo`) e correzione degli eventuali errori
 - [x] Scegliere la licenza (MIT) e aggiungere il file `LICENSE`
 
-## Fase 1: MVP usabile
+## Fase 1: MVP usabile ✅
 
 Obiettivo: un'app che useresti davvero prima di un volo, senza dover scrivere codici e orari a mano.
 
@@ -69,28 +69,49 @@ Obiettivo: ogni modifica viene controllata in automatico, così puoi cambiare il
 - [x] Test dei componenti con `@testing-library/react-native` (almeno il form e `TripResult`)
 - [x] Test per i casi limite di `calculateTrip` (volo a mezzanotte, viaggio di 0 minuti)
 
-## Fase 3: Persistenza e promemoria
+## Fase 3: I miei voli
 
-Obiettivo: l'app si ricorda di te e ti avvisa quando è ora di uscire.
+Obiettivo: una UI tutta mia, i voli salvati sul telefono e un avviso quando è ora di uscire.
 
-- [ ] Salvare un volo pianificato e mostrarlo all'apertura dell'app
-- [ ] Salvare sul telefono le preferenze (aeroporto abituale, minuti di viaggio, compagnia)
-- [ ] Notifica locale "È ora di partire" all'orario calcolato (`expo-notifications`)
+**Navigazione e UI**
+
+- [ ] Navigazione a tab: "Calcola" e "I miei voli"
+- [ ] Rivedere la pagina "Calcola" con una UI mia (stile, componenti, gerarchia delle informazioni)
+
+**Voli salvati (sul telefono)**
+
+- [ ] Data oltre all'ora nel picker del volo
+- [ ] Compagnia ricavata dal prefisso del numero di volo (es. `FR1234` → Ryanair), senza API
+- [ ] Repository dei voli in locale (`list`, `save`, `remove`), con `id` univoco e `updatedAt` per la futura sincronizzazione e lo stato "dati completi" o "in attesa di dati"
+- [ ] Pagina "Aggiungi volo" (numero e data) e pagina di dettaglio del volo con il calcolo
+
+**Promemoria**
+
+- [ ] Notifica locale "È ora di partire" per i voli salvati (`expo-notifications`)
 - [ ] Notifica di anticipo configurabile (es. 15 minuti prima)
-- [ ] Richiede una **development build** (`eas build --profile development`): Expo Go non basta più per alcuni moduli nativi
+- [ ] **Development build** (`eas build --profile development`), se Expo Go non basta per i moduli nativi
+- [ ] Salvare sul telefono le preferenze (aeroporto abituale, minuti di viaggio, compagnia)
 
 ## Fase 4: Dati reali
 
-Obiettivo: inserire meno dati possibile e ricevere stime più precise.
+Obiettivo: inserire solo numero di volo e data, il resto arriva in automatico. Per ora con il **piano gratuito** dell'API.
 
-- [ ] Compagnia ricavata dal numero di volo (es. `FR1234` → Ryanair)
-- [ ] Scegliere un'API voli (orari, terminal, ritardi) e valutarne costi e limiti
-- [ ] Compilare automaticamente il `FlightInput` a partire dal numero di volo
+- [ ] Provare AeroDataBox con il piano gratuito: quali date future restituisce, quante unità costa una chiamata
+- [ ] Proxy su Supabase Edge Function: la chiave API resta sul server, mai nell'app
+- [ ] Compilare il volo dal numero di volo con "recupera quando disponibile": se l'API non ha ancora i dati il volo resta in attesa e si riprova in automatico quando si avvicina
+- [ ] Fuso orario dell'aeroporto di partenza (l'API restituisce l'ora locale dell'aeroporto)
+- [ ] Aggiornare orario e terminal vicino alla partenza (es. il giorno prima e qualche ora prima)
 - [ ] Tempo di viaggio da casa stimato con il traffico (API mappe) invece che inserito a mano
 - [ ] Tempi degli aeroporti caricati da remoto, per aggiornarli senza pubblicare una nuova versione
-- [ ] Fuso orario dell'aeroporto di partenza (per voli che partono da un fuso diverso da quello del telefono)
 
-## Fase 5: Pubblicazione
+## Fase 5: Account
+
+Obiettivo: i tuoi voli ti seguono su ogni dispositivo.
+
+- [ ] Login con Supabase Auth
+- [ ] Repository dei voli su Supabase, sincronizzato con quello locale (`id` e `updatedAt` già pronti dalla Fase 3)
+
+## Fase 6: Pubblicazione
 
 Obiettivo: l'app è su TestFlight e poi sull'App Store.
 
@@ -116,6 +137,7 @@ Le idee arrivano qui prima di entrare in una fase.
 
 Una riga per ogni passo chiuso, la più recente in alto. Formato: `AAAA-MM-GG: cosa è stato fatto (PR o commit)`.
 
+- 2026-10-21: riorganizzata la roadmap: Fase 3 "I miei voli" (tab, UI propria della pagina Calcola, voli salvati in locale, notifiche), Fase 4 dati reali dal numero di volo con piano gratuito e proxy Supabase, nuova Fase 5 account, pubblicazione spostata in Fase 6
 - 2026-10-20: Fase 2 completata: workflow CI (`.github/workflows/ci.yml`) con test, typecheck, lint ed `expo-doctor` a ogni PR e dopo ogni merge su `main`, Node 24 da `.nvmrc`; test dei casi limite di `calculateTrip` (mezzanotte, alba, 0 minuti); risultato estratto in `TripResult` e test dei componenti con `@testing-library/react-native` (53 test)
 - 2026-10-20: licenza MIT (file `LICENSE`, campo `license` in `package.json`, sezione nel README); chiusa la Fase 0
 - 2026-10-20: tema scuro che segue il sistema (`userInterfaceStyle: "automatic"`): palette chiara/scura in `constants/theme.ts`, hook `useTheme`, tema di navigazione in `_layout.tsx`, componente `ThemedText`, stili da `makeStyles` con `useMemo`; provato su iPhone
